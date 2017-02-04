@@ -19,17 +19,14 @@ CREATE TABLE tutor_app_private.users (
 );
 
 CREATE TABLE tutor_app.courses (
-  id         SERIAL PRIMARY KEY,
-  name       TEXT NOT NULL UNIQUE,
-  instructor TEXT NOT NULL
+  course_number INTEGER PRIMARY KEY,
+  name          TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE tutor_app.classes (
-  crn        INTEGER PRIMARY KEY,
-  course_id  INTEGER NOT NULL REFERENCES tutor_app.courses (id) ON DELETE CASCADE,
-  start_time TIMESTAMPTZ NOT NULL
-  -- Add start and end_date as a date range either here or
-  -- in course depending on how this data comes back from USU
+  crn           INTEGER PRIMARY KEY,
+  course_number INTEGER NOT NULL REFERENCES tutor_app.courses (course_number) ON DELETE CASCADE,
+  instructor    TEXT NOT NULL
 );
 
 CREATE TABLE tutor_app.student_courses (
@@ -51,9 +48,9 @@ CREATE TABLE tutor_app.visits (
   class_crn    INTEGER NOT NULL REFERENCES tutor_app.classes (crn),
   reason       tutor_app.tutoring_reason,
   tutor_id     INTEGER REFERENCES tutor_app.users (id),
-  time_in      TIMESTAMPTZ DEFAULT now(), -- The time a student queues up for help
-  time_claimed TIMESTAMPTZ, -- The time a tutor claims the student
-  time_out     TIMESTAMPTZ, -- The time a student leaves
+  time_in      TIMESTAMPTZ DEFAULT now(), -- Time the student queues up for help
+  time_claimed TIMESTAMPTZ, -- Time the tutor claims the student
+  time_out     TIMESTAMPTZ, -- Time the student leaves
   feedback     TEXT
 );
 

@@ -1,0 +1,13 @@
+version: '2'
+services:
+  postgres:
+    image: postgres
+    environment:
+        - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data: {}

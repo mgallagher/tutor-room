@@ -1,5 +1,5 @@
--- User's full name
-CREATE FUNCTION tutor_app.users_full_name(some_user tutor_app.users)
+-- Student's full name
+CREATE FUNCTION tutor_room.students_full_name(student tutor_room.students)
   RETURNS TEXT AS $$
-SELECT some_user.first_name || ' ' || some_user.last_name
+SELECT student.first_name || ' ' || student.last_name
 $$ LANGUAGE SQL STABLE;

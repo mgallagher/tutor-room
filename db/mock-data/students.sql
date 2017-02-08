@@ -1,4 +1,5 @@
-INSERT INTO tutor_app.users (first_name, last_name, a_number)
+INSERT INTO
+  tutor_room.students (first_name, last_name, a_number)
 VALUES
   ('Amanda', 'Burton', 'A16293856'),
   ('Samuel', 'Wright', 'A17248774'),
@@ -97,4 +98,4 @@ VALUES
   ('Keith', 'Kennedy', 'A17865447'),
   ('Wanda', 'Flores', 'A12103750'),
   ('Stephen', 'Burns', 'A13087927'),
-  ('Matthew', 'Hudson', 'A11386030')
+  ('Matthew', 'Hudson', 'A11386030');

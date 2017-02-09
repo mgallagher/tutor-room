@@ -1,9 +1,16 @@
+import { ApolloProvider } from 'react-apollo';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
 import './index.css';
+import client from './helpers/create-apollo-client';
+import MyComponentWithData from './App';
+
+injectTapEventPlugin();
 
 ReactDOM.render(
-  <App />,
+  <ApolloProvider client={client}>
+    <MyComponentWithData />
+  </ApolloProvider>,
   document.getElementById('root')
 );

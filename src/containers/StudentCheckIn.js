@@ -29,7 +29,7 @@ const InputWrapper = styled.div`
   // transform: translateY(-60%);
 `;
 
-class StudentQueueContainer extends Component {
+class StudentCheckIn extends Component {
   constructor() {
     super()
 
@@ -73,4 +73,4 @@ class StudentQueueContainer extends Component {
   }
 }
 
-export default StudentQueueContainer
+export default StudentCheckIn

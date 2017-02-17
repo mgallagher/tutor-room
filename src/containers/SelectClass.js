@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { PropTypes } from 'react';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
 
-const ClassesForStudentQuery = gql`
+const STUDENT_CLASSES_QUERY = gql`
   query ClassesForStudent($aNumber: String!) {
     allStudentCourses(condition:{aNumber:$aNumber}) {
       nodes {
@@ -14,12 +14,12 @@ const ClassesForStudentQuery = gql`
   }
 `;
 
-const CourseRows = data => {
+const CourseRows = studentCourses => {
 
   return (
     <div>
     {
-      data.allStudentCourses.nodes.map(course => (
+      studentCourses.map(course => (
         <p>{course.name} - {course.instructor}</p>)
       )
     }
@@ -27,30 +27,41 @@ const CourseRows = data => {
   );
 };
 
-class SelectClass extends Component {
+function SelectClass(props) {
+  const loading = props.data.loading
 
-  render() {
-    if (this.props.data.loading) {
-      console.log('loading', this.props);
-      return (
-        <div>
-          <h2>Loading...</h2>
-        </div>
-      );
-    } else {
-      const {studentClassesByStudentId: classes} = this.props.data
-      console.log('not loading', classes);
-      return (
-        <div>
-          {CourseRows(this.props.data)}
-        </div>
-      );
-    }
+  if (loading) {
+    console.log('loading', props);
+    return (
+      <div>
+        <h2>Loading...</h2>
+      </div>
+    );
   }
+  const studentCourses = props.data.allStudentCourses.nodes
+  if (studentCourses.length) {
+    return (
+      <div>
+        {CourseRows(studentCourses)}
+      </div>
+    );
+  }
+  return (
+    <div>
+      <h2>Student not found</h2>
+    </div>
+  )
 }
 
+SelectClass.propTypes = {
+  loading: PropTypes.bool.isRequired,
+  allStudentCourses: PropTypes.shape({
+    nodes: PropTypes.array.isRequired,
+  })
+};
 
-const withData = graphql(ClassesForStudentQuery, {
+
+const withData = graphql(STUDENT_CLASSES_QUERY, {
   options: props => ({variables: { aNumber: props.params.aNumber }})
 })
 

@@ -98,4 +98,4 @@ VALUES
   ('Keith', 'Kennedy', 'A17865447'),
   ('Wanda', 'Flores', 'A12103750'),
   ('Stephen', 'Burns', 'A13087927'),
-  ('Matthew', 'Hudson', 'A11386030');
+  ('Mike', 'Gallagher', 'A00883333');

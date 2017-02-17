@@ -18,25 +18,25 @@ CREATE TABLE tutor_room.students (
   created    TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE TABLE tutor_room_private.courses (
+CREATE TABLE tutor_room.courses (
   course_number INTEGER PRIMARY KEY,
   name          TEXT NOT NULL UNIQUE
 );
 
-CREATE TABLE tutor_room_private.classes (
+CREATE TABLE tutor_room.classes (
   crn           INTEGER PRIMARY KEY,
-  course_number INTEGER NOT NULL REFERENCES tutor_room_private.courses (course_number) ON DELETE CASCADE,
+  course_number INTEGER NOT NULL REFERENCES tutor_room.courses (course_number) ON DELETE CASCADE,
   instructor    TEXT    NOT NULL
 );
 
-CREATE TABLE tutor_room_private.student_classes (
+CREATE TABLE tutor_room.student_classes (
   student_id INTEGER NOT NULL REFERENCES tutor_room.students (id),
-  class_crn  INTEGER NOT NULL REFERENCES tutor_room_private.classes (crn),
-  PRIMARY KEY (student_id, class_crn)
+  crn  INTEGER NOT NULL REFERENCES tutor_room.classes (crn),
+  PRIMARY KEY (student_id, crn)
 );
 
 CREATE VIEW tutor_room.student_courses AS
-  SELECT * FROM tutor_room_private.courses NATURAL JOIN tutor_room_private.classes;
+  SELECT * FROM tutor_room.courses NATURAL JOIN tutor_room.classes NATURAL JOIN tutor_room.student_classes NATURAL JOIN tutor_room.students;
 
 CREATE TYPE tutor_room.tutoring_reason AS ENUM (
   'debugging',
@@ -48,7 +48,7 @@ CREATE TYPE tutor_room.tutoring_reason AS ENUM (
 CREATE TABLE tutor_room.visits (
   id           SERIAL PRIMARY KEY,
   student_id   INTEGER NOT NULL REFERENCES tutor_room.students (id),
-  class_crn    INTEGER NOT NULL REFERENCES tutor_room_private.classes (crn),
+  crn          INTEGER NOT NULL REFERENCES tutor_room.classes (crn),
   reason       tutor_room.tutoring_reason,
   tutor_id     INTEGER REFERENCES tutor_room_private.tutors (id),
   time_in      TIMESTAMPTZ DEFAULT now(), -- Time the student queues up for help

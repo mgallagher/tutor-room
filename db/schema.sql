@@ -35,9 +35,6 @@ CREATE TABLE tutor_room.student_classes (
   PRIMARY KEY (student_id, crn)
 );
 
-CREATE VIEW tutor_room.student_courses AS
-  SELECT * FROM tutor_room.courses NATURAL JOIN tutor_room.classes NATURAL JOIN tutor_room.student_classes NATURAL JOIN tutor_room.students;
-
 CREATE TYPE tutor_room.tutoring_reason AS ENUM (
   'debugging',
   'syntax',
@@ -56,5 +53,12 @@ CREATE TABLE tutor_room.visits (
   time_out     TIMESTAMPTZ, -- Time the student leaves
   description  TEXT
 );
+
+CREATE VIEW tutor_room.student_courses AS
+  SELECT *
+  FROM tutor_room.courses
+    NATURAL JOIN tutor_room.classes
+    NATURAL JOIN tutor_room.student_classes
+    JOIN tutor_room.students ON students.id = student_classes.student_id;
 
 COMMIT;

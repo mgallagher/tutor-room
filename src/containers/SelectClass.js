@@ -5,28 +5,29 @@ import gql from 'graphql-tag';
 
 const ClassesForStudentQuery = gql`
   query ClassesForStudent($aNumber: String!) {
-    studentByANumber(aNumber: $aNumber) {
-      studentClassesByStudentId {
-        nodes {
-          classByClassCrn {
-            instructor
-            courseByCourseNumber {
-              name
-            }
-          }
-        }
+    allStudentCourses(condition:{aNumber:$aNumber}) {
+      nodes {
+        name
+        instructor
       }
     }
   }
 `;
 
+const CourseRows = data => {
 
+  return (
+    <div>
+    {
+      data.allStudentCourses.nodes.map(course => (
+        <p>{course.name} - {course.instructor}</p>)
+      )
+    }
+    </div>
+  );
+};
 
 class SelectClass extends Component {
-  constructor(props) {
-    console.log('select class');
-    super(props);
-  }
 
   render() {
     if (this.props.data.loading) {
@@ -41,7 +42,7 @@ class SelectClass extends Component {
       console.log('not loading', classes);
       return (
         <div>
-          <div>hi</div>
+          {CourseRows(this.props.data)}
         </div>
       );
     }

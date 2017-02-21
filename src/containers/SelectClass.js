@@ -1,60 +1,91 @@
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
+import Button from 'react-toolbox/lib/button/Button';
 
 
 const STUDENT_CLASSES_QUERY = gql`
   query ClassesForStudent($aNumber: String!) {
     allStudentCourses(condition:{aNumber:$aNumber}) {
       nodes {
+        studentId
         name
         instructor
+        crn
       }
     }
   }
 `;
 
-const CourseRows = studentCourses => {
+const CREATE_VISIT_MUTATION = gql`
+  mutation startVisit($studentId: Int!, $crn:Int!, $description:String) {
+    createVisit(input: {visit:{studentId:$studentId, crn:$crn, description:$description, }}) {
+      visit {
+        nodeId
+        id
+        description
+      }
+    }
+  }
+`;
+
+const CourseRows = ({studentCourses, onClick}) => {
 
   return (
     <div>
     {
       studentCourses.map(course => (
-        <p>{course.name} - {course.instructor}</p>)
+        <div key={course.crn}>
+          <p>{course.name} - {course.instructor}</p>
+          <Button label='Select' raised onClick={() => onClick(course.crn)}/>
+        </div>)
       )
     }
     </div>
   );
 };
 
-function SelectClass(props) {
-  const loading = props.data.loading
+class SelectClass extends Component {
+  constructor(props) {
+    super(props)
+    this.handleOnClick = this.handleOnClick.bind(this)
+  }
 
-  if (loading) {
-    console.log('loading', props);
+  async handleOnClick(crn) {
+    console.log(crn, 'clicked')
+    const studentId = this.props.data.allStudentCourses.nodes[0].studentId
+    await this.props.mutate({variables: {studentId: studentId, crn: crn}})
+  }
+
+  render() {
+    const loading = this.props.data.loading
+
+    if (loading) {
+      console.log('loading', this.props);
+      return (
+        <div>
+          <h2>Loading...</h2>
+        </div>
+      );
+    }
+    const studentCourses = this.props.data.allStudentCourses.nodes
+    if (studentCourses.length) {
+      return (
+        <div>
+          {CourseRows({studentCourses, onClick: this.handleOnClick})}
+        </div>
+      );
+    }
     return (
       <div>
-        <h2>Loading...</h2>
+        <h2>Student not found</h2>
       </div>
-    );
+    )
   }
-  const studentCourses = props.data.allStudentCourses.nodes
-  if (studentCourses.length) {
-    return (
-      <div>
-        {CourseRows(studentCourses)}
-      </div>
-    );
-  }
-  return (
-    <div>
-      <h2>Student not found</h2>
-    </div>
-  )
 }
 
 SelectClass.propTypes = {
-  loading: PropTypes.bool.isRequired,
+  loading: PropTypes.bool,
   allStudentCourses: PropTypes.shape({
     nodes: PropTypes.array.isRequired,
   })
@@ -65,4 +96,6 @@ const withData = graphql(STUDENT_CLASSES_QUERY, {
   options: props => ({variables: { aNumber: props.params.aNumber }})
 })
 
-export default withData(SelectClass)
+const withMutation = graphql(CREATE_VISIT_MUTATION)
+
+export default withMutation(withData(SelectClass))

@@ -7,10 +7,21 @@ SELECT student.first_name || ' ' || student.last_name
 $$ LANGUAGE SQL STABLE;
 
 -- Mutation functions
+CREATE FUNCTION tutor_room.start_visit(student_id INTEGER, crn INTEGER, reason tutor_room.tutoring_reason)
+  RETURNS tutor_room.visits AS $$
+INSERT INTO
+  tutor_room.visits (student_id, crn, reason, time_in)
+VALUES
+  ($1, $2, $3, current_timestamp)
+RETURNING *
+$$ LANGUAGE SQL VOLATILE;
+
 CREATE FUNCTION tutor_room.claim_visit(visit_id INTEGER, tutor_id INTEGER)
   RETURNS tutor_room.visits AS $$
-UPDATE tutor_room.visits
-SET (tutor_id, time_claimed) = ($2, current_timestamp)
+UPDATE
+  tutor_room.visits
+SET
+  (tutor_id, time_claimed) = ($2, current_timestamp)
 WHERE
   id = $1
 RETURNING *

@@ -63,7 +63,6 @@ class StudentCheckIn extends Component {
             value={this.state.aNumber}
             label='A Number'
             name='aNumber'
-            required
           />
           <StyledButton onClick={this.handleSubmit.bind(this)} label='Submit' raised primary />
         </InputWrapper>

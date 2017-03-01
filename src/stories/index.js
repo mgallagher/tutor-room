@@ -11,6 +11,7 @@ import usuTheme from '../styles';
 import Welcome from './Welcome';
 import Loading from '../components/Loading'
 import NavBar from '../components/NavBar'
+import DataCard from '../components/DataCard'
 
 const withStyles = (story) => (
   <AppTheme theme={usuTheme}>
@@ -49,3 +50,11 @@ storiesOf('Navigation Bar', module)
   .add('Logged out', () => (
     <NavBar />
   ));
+
+storiesOf('DataCard', module)
+  .add('Number', () =>(
+    <DataCard
+      number={3}
+      label="students waiting"
+    />
+  ))

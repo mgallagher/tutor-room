@@ -20,6 +20,7 @@ const withStyles = (story) => (
     </ThemeProvider>
   </AppTheme>
 );
+
 addDecorator(withStyles);
 
 storiesOf('Welcome', module)
@@ -57,4 +58,4 @@ storiesOf('DataCard', module)
       number={3}
       label="students waiting"
     />
-  ))
+  ));

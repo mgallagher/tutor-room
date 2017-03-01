@@ -23,12 +23,6 @@ const StyledInput = styled(Input)`
   font-size: 25px;
 `;
 
-const InputWrapper = styled.div`
-  // position: relative;
-  // top: 50%;
-  // transform: translateY(-60%);
-`;
-
 class StudentCheckIn extends Component {
   constructor() {
     super()
@@ -56,7 +50,6 @@ class StudentCheckIn extends Component {
     return (
       <FormWrapper onSubmit={this.handleSubmit.bind(this)}>
         <StyledCard>
-        <InputWrapper>
           <StyledInput
             type='text'
             onChange={this.handleChange.bind(this)}
@@ -65,11 +58,10 @@ class StudentCheckIn extends Component {
             name='aNumber'
           />
           <StyledButton onClick={this.handleSubmit.bind(this)} label='Submit' raised primary />
-        </InputWrapper>
         </StyledCard>
       </FormWrapper>
     )
   }
-}
+};
 
-export default StudentCheckIn
+export default StudentCheckIn;

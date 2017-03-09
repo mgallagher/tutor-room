@@ -8,7 +8,7 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: ${props => props.theme.aggieBlue};
+  background-color: ${props => props.theme.primary};
   color: white;
   padding: 5px 10px;
 `

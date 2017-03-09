@@ -7,16 +7,16 @@ import Input from 'react-toolbox/lib/input/Input';
 
 import '../assets/react-toolbox/theme.css';
 import theme from '../assets/react-toolbox/theme.js';
-import usuTheme from '../styles';
+import colors from '../styles';
 import Welcome from './Welcome';
 import Loading from '../components/Loading'
 import NavBar from '../components/NavBar'
 import DataCard from '../components/DataCard'
 
 const withStyles = (story) => (
-  <AppTheme theme={usuTheme}>
+  <AppTheme theme={colors}>
     <ThemeProvider theme={theme}>
-        {story()}
+      {story()}
     </ThemeProvider>
   </AppTheme>
 );

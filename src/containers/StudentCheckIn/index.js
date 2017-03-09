@@ -6,13 +6,13 @@ import Card from 'react-toolbox/lib/card/Card';
 import Input from 'react-toolbox/lib/input/Input';
 
 const FormWrapper = styled.form`
-  width: 400px;
+  max-width: 500px;
   margin: 0 auto;
 `;
 
 const StyledCard = styled(Card)`
-    height: 250px;
-    padding: 15px;
+  height: 250px;
+  padding: 15px;
 `;
 
 const StyledButton = styled(Button)`
@@ -24,23 +24,8 @@ const StyledInput = styled(Input)`
 `;
 
 class StudentCheckIn extends Component {
-  constructor() {
-    super()
-
-    this.state = {
-      aNumber: ''
-    }
-  }
-
-  handleChange(value) {
-    if (value === '') {
-      value = 'A'
-    }
-    this.setState({
-      ...this.state,
-      aNumber: value
-    })
-  }
+  state = { aNumber: '' };
+  handleChange = value => this.setState({aNumber: value});
 
   handleSubmit(event) {
     browserHistory.push(`get-help/${this.state.aNumber}`)

@@ -8,21 +8,19 @@ const WrapperCard = styled(Card)`
   width: 350px;
   padding: 10px;
   text-align: center;
-  display: flex;
-  justify-content: center;
 `;
 
 const LargeNumber = styled.label`
   font-size: 110pt;
   font-weight: lighter;
   line-height: 0.9;
-  color: ${props => props.theme.black};
+  color: ${props => props.theme.accent};
 `;
 
 const Label = styled.label`
   font-size: 20pt;
   font-weight: lighter;
-  color: ${props => props.theme.grey};
+  color: ${props => props.theme.textSecondary};
 `;
 
 function DataCard(props) {
@@ -36,7 +34,10 @@ function DataCard(props) {
 
 DataCard.propTypes = {
   label: PropTypes.string.isRequired,
-  number: PropTypes.string.isRequired
+  number: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
+  ])
 };
 
 export default DataCard

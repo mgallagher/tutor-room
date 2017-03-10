@@ -1,5 +1,5 @@
 INSERT INTO
-  tutor_room.students (first_name, last_name, a_number)
+  tutor_room.student (first_name, last_name, a_number)
 VALUES
   ('Amanda', 'Burton', 'A16293856'),
   ('Samuel', 'Wright', 'A17248774'),

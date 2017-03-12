@@ -8,7 +8,7 @@ function Routes() {
   return (
     <Router history={browserHistory}>
       <Route path="/" component={App}>
-        <Route path="login" component={StudentCheckIn} />
+        <Route path="checkin" component={StudentCheckIn} />
       </Route>
     </Router>
   );

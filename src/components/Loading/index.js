@@ -1,8 +1,14 @@
 import React from 'react';
-import ProgressBar from 'react-toolbox/lib/progress_bar/ProgressBar';
+import styled from 'styled-components'
+
+const Wrapper = styled.div`
+  font-size: 20pt;
+  font-weight: lighter;
+  color: ${props => props.theme.textSecondary};
+`;
 
 const Loading = () => (
-  <ProgressBar type='circular' mode='indeterminate' multicolor />
+  <Wrapper>loading...</Wrapper>
 );
 
 export default Loading;

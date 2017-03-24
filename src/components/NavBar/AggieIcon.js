@@ -7,10 +7,6 @@ const SVG = styled.svg`
   width: 35px;
 `;
 
-const hello = {
-  yes: 3
-};
-
 const AggieIcon = () => (
   <SVG viewBox="23 53 34.728 32.982" xmlns="http://www.w3.org/2000/svg">
     <path

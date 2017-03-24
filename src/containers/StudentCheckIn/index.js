@@ -1,50 +1,46 @@
-import { browserHistory } from 'react-router'
-import React, { Component } from 'react'
-import styled from 'styled-components'
-import Button from 'react-toolbox/lib/button/Button';
-import Card from 'react-toolbox/lib/card/Card';
-import Input from 'react-toolbox/lib/input/Input';
+import React from 'react';
+import styled from 'styled-components';
+import { compose, withState, withHandlers } from 'recompose';
+import { Grid } from 'semantic-ui-react';
 
-const FormWrapper = styled.form`
+import EnterAggieNumber from './EnterAggieNumber';
+
+const SqueezedColumn = styled(Grid.Column)`
+  max-width: 450px
 `;
 
-const StyledCard = styled(Card)`
-  margin: 0 auto;
-  max-width: 500px;
-  min-height: 250px;
-  padding: 15px;
-`;
+const enhance = compose(
+  withState('aNumber', 'setData', ''),
+  withState('step', 'incrementStep', 1),
+  withHandlers({
+    // handleANumberChange: props =>
+    //   aNumber => {
+    //     props.setANumber(aNumber);
+    //   },
+    handleChange: props => event => props.setData(event.target.value),
+    handleNextStep: props =>
+      event => {
+        event.preventDefault();
+        props.incrementStep(step => step + 1);
+      }
+  })
+);
 
-const StyledButton = styled(Button)`
-  margin: 0 auto;
-  background: ${props => props.theme.accent};
-`;
-
-const StyledInput = styled(Input)`
-  font-size: 25px;
-`;
-
-class StudentCheckIn extends Component {
-  state = { aNumber: '' };
-  handleChange = value => this.setState({aNumber: value});
-  handleSubmit = event => browserHistory.push(`get-help/${this.state.aNumber}`)
-
-  render() {
-    return (
-      <FormWrapper onSubmit={this.handleSubmit}>
-        <StyledCard>
-          <StyledInput
-            type='text'
-            onChange={this.handleChange}
-            value={this.state.aNumber}
-            label='A Number'
-            name='aNumber'
-          />
-          <StyledButton onClick={this.handleSubmit} label='Next' raised primary />
-        </StyledCard>
-      </FormWrapper>
-    )
-  }
+const StudentCheckIn = ({ aNumber, step, handleChange, handleNextStep }) => {
+  console.log(aNumber)
+  return (
+    <Grid centered columns={1}>
+      <SqueezedColumn>
+        {step === 1 &&
+          <EnterAggieNumber
+            value={aNumber}
+            onSubmit={handleNextStep}
+            onChange={handleChange}
+          />}
+        {step === 2 && <div>LOL</div>}
+      </SqueezedColumn>
+    </Grid>
+  );
 };
 
-export default StudentCheckIn;
+export default enhance(StudentCheckIn);

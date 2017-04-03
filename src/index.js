@@ -3,7 +3,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { ThemeProvider as AppTheme } from 'styled-components';
 
-import './assets/react-toolbox/theme.css';
 import client from './helpers/createApolloClient';
 import Routes from './routes';
 import colors from './styles';

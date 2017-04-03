@@ -1,16 +1,18 @@
-import React from 'react';
-import { compose, withState, withHandlers } from 'recompose';
+import React, { PropTypes } from 'react';
 import { Form, Segment } from 'semantic-ui-react';
 
-
-const EnterAggieNumber = ({ value, onChange, onSubmit }) => (
+const EnterAggieNumber = ({ value, onChange }) => (
   <Segment>
-    <h2>Enter Your A-Number</h2>
-    <Form onSubmit={onSubmit} size="large">
+    <h3>Enter Your A-Number</h3>
+    <Form size="large">
       <Form.Input name="aNumber" onChange={onChange} placeholder="A-Number" />
-      <Form.Button primary>Submit</Form.Button>
     </Form>
   </Segment>
 );
+
+EnterAggieNumber.propTypes = {
+  value: PropTypes.string,
+  onChange: PropTypes.func.isRequired
+};
 
 export default EnterAggieNumber;

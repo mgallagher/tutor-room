@@ -34,7 +34,6 @@ injectGlobal`
     padding:0;
   }
   body {
-    font-family: Roboto, sans-serif;
     background-color: ${colors.gray100};
   }
 `;

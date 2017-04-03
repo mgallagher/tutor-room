@@ -1,46 +1,75 @@
 import React from 'react';
 import styled from 'styled-components';
-import { compose, withState, withHandlers } from 'recompose';
+import gql from 'graphql-tag';
+import { graphql } from 'react-apollo';
+import { compose } from 'recompose';
 import { Grid } from 'semantic-ui-react';
 
 import EnterAggieNumber from './EnterAggieNumber';
+import SelectClass from './SelectClass';
+import EnterDescription from './EnterDescription';
 
 const SqueezedColumn = styled(Grid.Column)`
-  max-width: 450px
+  max-width: 450px;
 `;
 
-const enhance = compose(
-  withState('aNumber', 'setData', ''),
-  withState('step', 'incrementStep', 1),
-  withHandlers({
-    // handleANumberChange: props =>
-    //   aNumber => {
-    //     props.setANumber(aNumber);
-    //   },
-    handleChange: props => event => props.setData(event.target.value),
-    handleNextStep: props =>
-      event => {
-        event.preventDefault();
-        props.incrementStep(step => step + 1);
+const CREATE_VISIT_MUTATION = gql`
+  mutation startVisit($aNumber: String!, $crn:Int!, $reason: TutoringReason, $description:String) {
+    startVisit(input: {aNumber: $aNumber, crn: $crn, reason: $reason, description:$description}) {
+      visit {
+        nodeId
+        id
+        description
       }
-  })
-);
+    }
+  }
+`;
 
-const StudentCheckIn = ({ aNumber, step, handleChange, handleNextStep }) => {
-  console.log(aNumber)
-  return (
-    <Grid centered columns={1}>
-      <SqueezedColumn>
-        {step === 1 &&
+const enhance = compose(graphql(CREATE_VISIT_MUTATION));
+
+class StudentCheckIn extends React.Component {
+  state = {
+    aNumber: '',
+    crn: '',
+    description: '',
+    reason: ''
+  };
+
+  handleChange = (e, { name, value }) => this.setState({ [name]: value });
+  handleClassSelect = crn => event => this.setState({ crn: crn });
+  handleSubmit = async event => {
+    event.preventDefault();
+    const { aNumber, crn, description, reason } = this.state;
+    await this.props.mutate({
+      variables: { aNumber, crn, description, reason }
+    });
+    console.log('mutation done');
+  };
+
+  render() {
+    return (
+      <Grid centered divided="vertically" columns={1}>
+        <SqueezedColumn>
           <EnterAggieNumber
-            value={aNumber}
-            onSubmit={handleNextStep}
-            onChange={handleChange}
-          />}
-        {step === 2 && <div>LOL</div>}
-      </SqueezedColumn>
-    </Grid>
-  );
-};
+            value={this.state.aNumber}
+            onChange={this.handleChange}
+          />
+          {this.state.aNumber.length === 9 &&
+            <SelectClass
+              aNumber={this.state.aNumber}
+              handleClassClick={this.handleClassSelect}
+              selectedClass={this.state.crn}
+            />}
+          <EnterDescription
+            onChange={this.handleChange}
+            onSubmit={this.handleSubmit}
+            checked={this.state.reason}
+          />
+        </SqueezedColumn>
+      </Grid>
+    );
+  }
+}
 
+// export default enhance(StudentCheckIn);
 export default enhance(StudentCheckIn);

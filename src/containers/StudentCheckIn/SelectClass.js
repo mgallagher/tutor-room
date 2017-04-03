@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Segment, List, Header, Icon } from 'semantic-ui-react';
@@ -69,5 +69,11 @@ const SelectClass = ({ data, handleClassClick, selectedClass }) => {
 const withData = graphql(STUDENT_CLASSES_QUERY, {
   options: props => ({ variables: { aNumber: props.aNumber } })
 });
+
+SelectClass.propTypes = {
+  data: PropTypes.object.isRequired,
+  handleClassClick: PropTypes.func.isRequired,
+  selectedClass: PropTypes.number
+};
 
 export default withData(SelectClass);

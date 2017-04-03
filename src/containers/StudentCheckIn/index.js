@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import { compose } from 'recompose';
-import { Grid } from 'semantic-ui-react';
+import { Grid, Header } from 'semantic-ui-react';
 
 import EnterAggieNumber from './EnterAggieNumber';
 import SelectClass from './SelectClass';
@@ -28,12 +28,14 @@ const CREATE_VISIT_MUTATION = gql`
 const enhance = compose(graphql(CREATE_VISIT_MUTATION));
 
 class StudentCheckIn extends React.Component {
-  state = {
+  initialState = {
     aNumber: '',
-    crn: '',
+    crn: 0,
     description: '',
-    reason: ''
+    reason: '',
+    submitted: false
   };
+  state = this.initialState;
 
   handleChange = (e, { name, value }) => this.setState({ [name]: value });
   handleClassSelect = crn => event => this.setState({ crn: crn });
@@ -43,29 +45,32 @@ class StudentCheckIn extends React.Component {
     await this.props.mutate({
       variables: { aNumber, crn, description, reason }
     });
-    console.log('mutation done');
+    this.setState({ submitted: true });
+    setTimeout(() => this.setState(this.initialState), 3000);
   };
 
   render() {
     return (
       <Grid centered divided="vertically" columns={1}>
-        <SqueezedColumn>
-          <EnterAggieNumber
-            value={this.state.aNumber}
-            onChange={this.handleChange}
-          />
-          {this.state.aNumber.length === 9 &&
-            <SelectClass
-              aNumber={this.state.aNumber}
-              handleClassClick={this.handleClassSelect}
-              selectedClass={this.state.crn}
-            />}
-          <EnterDescription
-            onChange={this.handleChange}
-            onSubmit={this.handleSubmit}
-            checked={this.state.reason}
-          />
-        </SqueezedColumn>
+        {!this.state.submitted &&
+          <SqueezedColumn>
+            <EnterAggieNumber
+              value={this.state.aNumber}
+              onChange={this.handleChange}
+            />
+            {this.state.aNumber.length === 9 &&
+              <SelectClass
+                aNumber={this.state.aNumber}
+                handleClassClick={this.handleClassSelect}
+                selectedClass={this.state.crn}
+              />}
+            <EnterDescription
+              onChange={this.handleChange}
+              onSubmit={this.handleSubmit}
+              checked={this.state.reason}
+            />
+          </SqueezedColumn>}
+        {this.state.submitted && <Header as="h2">Thank you!</Header>}
       </Grid>
     );
   }

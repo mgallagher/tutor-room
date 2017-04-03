@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import NavBar from '../../components/NavBar';
 
 const ContentWrapper = styled.div`
-  margin-top: 20px;
+  margin-top: 30px;
 `;
 
 class App extends Component {

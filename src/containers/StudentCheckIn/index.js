@@ -51,7 +51,7 @@ class StudentCheckIn extends React.Component {
 
   render() {
     return (
-      <Grid centered divided="vertically" columns={1}>
+      <Grid centered columns={1} textAlign="left">
         {!this.state.submitted &&
           <SqueezedColumn>
             <EnterAggieNumber

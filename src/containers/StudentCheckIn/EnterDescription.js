@@ -11,6 +11,7 @@ const EnterDescription = ({ checked, onChange, onSubmit }) => {
         <Form.Group widths="equal">
           {[...visitReasons].map(([reason, label]) => (
             <Form.Radio
+              key={reason}
               label={label}
               checked={checked === reason}
               onChange={onChange}

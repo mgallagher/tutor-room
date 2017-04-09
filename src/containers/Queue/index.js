@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
-import { Header, Grid, Table } from 'semantic-ui-react';
+import { Button, Card, Header, Grid, Table } from 'semantic-ui-react';
 import styled from 'styled-components';
 import { graphql } from 'react-apollo';
+import { compose } from 'recompose';
 import gql from 'graphql-tag';
 import moment from 'moment';
 
@@ -12,6 +13,7 @@ const QUEUE_QUERY = gql`
     allVisits(orderBy:TIME_IN_DESC) {
       totalCount
       nodes {
+        id
         nodeId
         reason
         description
@@ -32,14 +34,48 @@ const QUEUE_QUERY = gql`
   }
 `;
 
+const CLAIM_VISIT_MUTATION = gql`
+  mutation claimVisit($visitId: Int!, $tutorId:Int!) {
+    claimVisit(input:{visitId: $visitId, tutorId:$tutorId}) {
+      visit {
+        nodeId
+        id
+        timeClaimed
+        timeOut
+        description
+      }
+    }
+  }
+`;
+
+const FINISH_VISIT_MUTATION = gql`
+  mutation finishVisit($visitId: Int!) {
+    finishVisit(input:{visitId: $visitId}) {
+      visit {
+        nodeId
+        id
+        timeClaimed
+        timeOut
+        description
+      }
+    }
+  }
+`;
+
 const SqueezedWrapper = styled.div`
   max-width: 90%;
 `;
 
-const QueueRow = ({ visit }) => {
+const enhance = compose(
+  graphql(QUEUE_QUERY),
+  graphql(CLAIM_VISIT_MUTATION, { name: 'claimVisit' }),
+  graphql(FINISH_VISIT_MUTATION, { name: 'finishVisit' })
+);
+
+const QueueRow = ({ visit, handleClick }) => {
   const { studentByStudentId, classByCrn, reason, description, timeIn } = visit;
   return (
-    <Table.Row>
+    <Table.Row onClick={handleClick}>
       <Table.Cell>
         {studentByStudentId.fullName}
       </Table.Cell>
@@ -65,11 +101,99 @@ const QueueRow = ({ visit }) => {
 };
 
 export class Queue extends React.Component {
+  handleQueueSelect = visit =>
+    async event => {
+      await this.props.claimVisit({
+        variables: { visitId: visit.id, tutorId: 1 },
+        optimisticResponse: {
+          claimVisit: {
+            visit: {
+              ...visit,
+              timeClaimed: true
+            },
+            __typename: 'ClaimVisitPayload'
+          }
+        }
+      });
+    };
+
+  handleCurrentVisitSelect = visit =>
+    async event => {
+      await this.props.finishVisit({
+        variables: { visitId: visit.id },
+        optimisticResponse: {
+          finishVisit: {
+            visit: {
+              ...visit,
+              timeOut: true
+            }
+          }
+        }
+      });
+    };
+
   render() {
     const { allVisits, loading } = this.props.data;
+    const unclaimedVisit = ({ timeClaimed, timeOut }) =>
+      !timeClaimed && !timeOut;
+    const claimedVisit = ({ timeClaimed, timeOut }) => timeClaimed && !timeOut;
+    const priorVisit = ({ timeClaimed, timeOut }) => timeClaimed && timeOut;
+
     return (
       <Grid centered columns={1} textAlign="left">
         <SqueezedWrapper>
+          {/* Current */}
+          <Header as="h4" textAlign="left">Current Session(s)</Header>
+          <Table selectable>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell width={3}>Name</Table.HeaderCell>
+                <Table.HeaderCell width={3}>Class</Table.HeaderCell>
+                <Table.HeaderCell width={3}>Reason</Table.HeaderCell>
+                <Table.HeaderCell width={3}>Waiting</Table.HeaderCell>
+                <Table.HeaderCell width={6}>Description</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {!loading &&
+                allVisits.nodes
+                  .filter(claimedVisit)
+                  .map(visit => (
+                    <QueueRow
+                      handleClick={this.handleCurrentVisitSelect(visit)}
+                      key={visit.nodeId}
+                      visit={visit}
+                    />
+                  ))}
+            </Table.Body>
+          </Table>
+          {/* QUEUE */}
+          <Header as="h4" textAlign="left">Queue</Header>
+          <Table selectable>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell width={3}>Name</Table.HeaderCell>
+                <Table.HeaderCell width={3}>Class</Table.HeaderCell>
+                <Table.HeaderCell width={3}>Reason</Table.HeaderCell>
+                <Table.HeaderCell width={3}>Waiting</Table.HeaderCell>
+                <Table.HeaderCell width={6}>Description</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {!loading &&
+                allVisits.nodes
+                  .filter(unclaimedVisit)
+                  .map(visit => (
+                    <QueueRow
+                      handleClick={this.handleQueueSelect(visit)}
+                      key={visit.nodeId}
+                      visit={visit}
+                    />
+                  ))}
+            </Table.Body>
+          </Table>
+          {/* VISITS */}
+          <Header as="h4" textAlign="left">Prior Sessions</Header>
           <Table>
             <Table.Header>
               <Table.Row>
@@ -82,9 +206,9 @@ export class Queue extends React.Component {
             </Table.Header>
             <Table.Body>
               {!loading &&
-                allVisits.nodes.map(visit => (
-                  <QueueRow key={visit.nodeId} visit={visit} />
-                ))}
+                allVisits.nodes
+                  .filter(priorVisit)
+                  .map(visit => <QueueRow key={visit.nodeId} visit={visit} />)}
             </Table.Body>
           </Table>
         </SqueezedWrapper>
@@ -93,6 +217,4 @@ export class Queue extends React.Component {
   }
 }
 
-const withData = graphql(QUEUE_QUERY);
-
-export default withData(Queue);
+export default enhance(Queue);

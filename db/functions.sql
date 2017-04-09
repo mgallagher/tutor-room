@@ -26,4 +26,26 @@ WHERE
 RETURNING *
 $$ LANGUAGE SQL VOLATILE;
 
+CREATE FUNCTION tutor_room.finish_visit(visit_id INTEGER)
+  RETURNS tutor_room.visit AS $$
+UPDATE
+  tutor_room.visit
+SET
+  time_out = current_timestamp
+WHERE
+  id = $1
+RETURNING *
+$$ LANGUAGE SQL VOLATILE;
+
+-- CREATE FUNCTION tutor_room.requeue(visit_id INTEGER)
+--   RETURNS tutor_room.visit AS $$
+-- UPDATE
+--   tutor_room.visit
+-- SET
+--   time_out = current_timestamp
+-- WHERE
+--   id = $1
+-- RETURNING *
+-- $$ LANGUAGE SQL VOLATILE;
+
 COMMIT;

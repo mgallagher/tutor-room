@@ -6,10 +6,10 @@ import { compose } from 'recompose';
 import gql from 'graphql-tag';
 import moment from 'moment';
 
-import { visitReasons } from '../../constants';
+import { sessionReasons } from '../../constants';
 
-const visitFragment = gql`
-  fragment VisitFragment on Visit {
+const sessionFragment = gql`
+  fragment SessionFragment on Session {
   id
   nodeId
   reason
@@ -21,7 +21,7 @@ const visitFragment = gql`
 
 const QUEUE_QUERY = gql`
   query {
-    allVisits(orderBy:TIME_IN_DESC) {
+    allSessions(orderBy:TIME_IN_DESC) {
       totalCount
       nodes {
         id
@@ -45,10 +45,10 @@ const QUEUE_QUERY = gql`
   }
 `;
 
-const CLAIM_VISIT_MUTATION = gql`
-  mutation claimVisit($visitId: Int!, $tutorId:Int!) {
-    claimVisit(input:{visitId: $visitId, tutorId:$tutorId}) {
-      visit {
+const CLAIM_SESSION_MUTATION = gql`
+  mutation claimSession($sessionId: Int!, $tutorId:Int!) {
+    claimSession(input:{sessionId: $sessionId, tutorId:$tutorId}) {
+      session {
         nodeId
         id
         timeClaimed
@@ -59,10 +59,10 @@ const CLAIM_VISIT_MUTATION = gql`
   }
 `;
 
-const FINISH_VISIT_MUTATION = gql`
-  mutation finishVisit($visitId: Int!) {
-    finishVisit(input:{visitId: $visitId}) {
-      visit {
+const FINISH_SESSION_MUTATION = gql`
+  mutation finishSession($sessionId: Int!) {
+    finishSession(input:{sessionId: $sessionId}) {
+      session {
         nodeId
         id
         timeClaimed
@@ -80,12 +80,12 @@ const SqueezedWrapper = styled.div`
 
 const enhance = compose(
   graphql(QUEUE_QUERY),
-  graphql(CLAIM_VISIT_MUTATION, { name: 'claimVisit' }),
-  graphql(FINISH_VISIT_MUTATION, { name: 'finishVisit' })
+  graphql(CLAIM_SESSION_MUTATION, { name: 'claimSession' }),
+  graphql(FINISH_SESSION_MUTATION, { name: 'finishSession' })
 );
 
-const QueueRow = ({ visit, handleClick }) => {
-  const { studentByStudentId, classByCrn, reason, description, timeIn } = visit;
+const QueueRow = ({ session, handleClick }) => {
+  const { studentByStudentId, classByCrn, reason, description, timeIn } = session;
   return (
     <Table.Row onClick={handleClick}>
       <Table.Cell>
@@ -100,7 +100,7 @@ const QueueRow = ({ visit, handleClick }) => {
         </Header>
       </Table.Cell>
       <Table.Cell>
-        {visitReasons.get(reason)}
+        {sessionReasons.get(reason)}
       </Table.Cell>
       <Table.Cell>
         {moment(timeIn).fromNow()}
@@ -112,8 +112,8 @@ const QueueRow = ({ visit, handleClick }) => {
   );
 };
 
-const QueueCard = ({ visit, handleClick, raised }) => {
-  const { studentByStudentId, classByCrn, reason, description, timeIn } = visit;
+const QueueCard = ({ session, handleClick, raised }) => {
+  const { studentByStudentId, classByCrn, reason, description, timeIn } = session;
   return (
     <Card raised={raised}>
       <Card.Content>
@@ -139,8 +139,8 @@ const QueueCard = ({ visit, handleClick, raised }) => {
   );
 };
 
-const CurrentSessionCard = ({ visit, handleClick, raised }) => {
-  const { studentByStudentId, classByCrn, reason, description, timeIn } = visit;
+const CurrentSessionCard = ({ session, handleClick, raised }) => {
+  const { studentByStudentId, classByCrn, reason, description, timeIn } = session;
   return (
     <Card raised={raised}>
       <Card.Content>
@@ -168,30 +168,30 @@ const CurrentSessionCard = ({ visit, handleClick, raised }) => {
 };
 
 export class Queue extends React.Component {
-  handleQueueSelect = visit =>
+  handleQueueSelect = session =>
     async event => {
-      await this.props.claimVisit({
-        variables: { visitId: visit.id, tutorId: 1 },
+      await this.props.claimSession({
+        variables: { sessionId: session.id, tutorId: 1 },
         optimisticResponse: {
-          claimVisit: {
-            visit: {
-              ...visit,
+          claimSession: {
+            session: {
+              ...session,
               timeClaimed: true
             },
-            __typename: 'ClaimVisitPayload'
+            __typename: 'ClaimSessionPayload'
           }
         }
       });
     };
 
-  handleCurrentVisitSelect = visit =>
+  handleCurrentSessionSelect = session =>
     async event => {
-      await this.props.finishVisit({
-        variables: { visitId: visit.id },
+      await this.props.finishSession({
+        variables: { sessionId: session.id },
         optimisticResponse: {
-          finishVisit: {
-            visit: {
-              ...visit,
+          finishSession: {
+            session: {
+              ...session,
               timeOut: true
             }
           }
@@ -200,11 +200,11 @@ export class Queue extends React.Component {
     };
 
   render() {
-    const { allVisits, loading } = this.props.data;
-    const unclaimedVisit = ({ timeClaimed, timeOut }) =>
+    const { allSessions, loading } = this.props.data;
+    const unclaimedSession = ({ timeClaimed, timeOut }) =>
       !timeClaimed && !timeOut;
-    const claimedVisit = ({ timeClaimed, timeOut }) => timeClaimed && !timeOut;
-    const priorVisit = ({ timeClaimed, timeOut }) => timeClaimed && timeOut;
+    const claimedSession = ({ timeClaimed, timeOut }) => timeClaimed && !timeOut;
+    const priorSession = ({ timeClaimed, timeOut }) => timeClaimed && timeOut;
 
     return (
       <SqueezedWrapper>
@@ -212,13 +212,13 @@ export class Queue extends React.Component {
         <Header as="h3" textAlign="left">Current Session(s)</Header>
         <Card.Group itemsPerRow={3}>
           {!loading &&
-            allVisits.nodes
-              .filter(claimedVisit)
-              .map((visit, i) => (
+            allSessions.nodes
+              .filter(claimedSession)
+              .map((session, i) => (
                 <CurrentSessionCard
-                  handleClick={this.handleQueueSelect(visit)}
-                  key={visit.nodeId}
-                  visit={visit}
+                  handleClick={this.handleQueueSelect(session)}
+                  key={session.nodeId}
+                  session={session}
                   raised={i === 0}
                 />
               ))}
@@ -228,18 +228,18 @@ export class Queue extends React.Component {
         <Header as="h3" textAlign="left">Queue</Header>
         <Card.Group itemsPerRow={3}>
           {!loading &&
-            allVisits.nodes
-              .filter(unclaimedVisit)
-              .map((visit, i) => (
+            allSessions.nodes
+              .filter(unclaimedSession)
+              .map((session, i) => (
                 <QueueCard
-                  handleClick={this.handleQueueSelect(visit)}
-                  key={visit.nodeId}
-                  visit={visit}
+                  handleClick={this.handleQueueSelect(session)}
+                  key={session.nodeId}
+                  session={session}
                   raised={i === 0}
                 />
               ))}
         </Card.Group>
-        {/* VISITS */}
+        {/* SESSIONS */}
         <Header as="h3" textAlign="left">Prior Sessions</Header>
         <Table>
           <Table.Header>
@@ -253,9 +253,9 @@ export class Queue extends React.Component {
           </Table.Header>
           <Table.Body>
             {!loading &&
-              allVisits.nodes
-                .filter(priorVisit)
-                .map(visit => <QueueRow key={visit.nodeId} visit={visit} />)}
+              allSessions.nodes
+                .filter(priorSession)
+                .map(session => <QueueRow key={session.nodeId} session={session} />)}
           </Table.Body>
         </Table>
       </SqueezedWrapper>

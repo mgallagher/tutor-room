@@ -1,5 +1,5 @@
 INSERT INTO
-  tutor_room.visit (student_id, crn, reason, time_in)
+  tutor_room.session (student_id, crn, reason, time_in)
 VALUES
   (46, 12986, 'debugging', '2017-02-22 04:23:54+00'),
   (75, 14472, 'syntax', '2017-02-22 04:23:54+00'),

@@ -42,7 +42,7 @@ CREATE TYPE tutor_room.tutoring_reason AS ENUM (
   'program_design'
 );
 
-CREATE TABLE tutor_room.visit (
+CREATE TABLE tutor_room.session (
   id           SERIAL PRIMARY KEY,
   student_id   INTEGER NOT NULL REFERENCES tutor_room.student (id),
   crn          INTEGER NOT NULL REFERENCES tutor_room.class (crn),
@@ -51,7 +51,8 @@ CREATE TABLE tutor_room.visit (
   time_in      TIMESTAMPTZ DEFAULT now(), -- Time the student queues up for help
   time_claimed TIMESTAMPTZ, -- Time the tutor claims the student
   time_out     TIMESTAMPTZ, -- Time the student leaves
-  description  TEXT
+  description  TEXT,
+  requeued     BOOLEAN DEFAULT FALSE NOT NULL
 );
 
 CREATE VIEW tutor_room.student_course AS

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Segment, Form } from 'semantic-ui-react';
 
-import { visitReasons } from '../../constants';
+import { sessionReasons } from '../../constants';
 
 const EnterDescription = ({ checked, onChange, onSubmit }) => {
   return (
@@ -9,7 +9,7 @@ const EnterDescription = ({ checked, onChange, onSubmit }) => {
       <h3>Tell us how we can help</h3>
       <Form onSubmit={onSubmit}>
         <Form.Group widths="equal">
-          {[...visitReasons].map(([reason, label]) => (
+          {[...sessionReasons].map(([reason, label]) => (
             <Form.Radio
               key={reason}
               label={label}

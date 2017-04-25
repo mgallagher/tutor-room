@@ -13,10 +13,10 @@ const SqueezedColumn = styled(Grid.Column)`
   max-width: 450px;
 `;
 
-const CREATE_VISIT_MUTATION = gql`
-  mutation startVisit($aNumber: String!, $crn:Int!, $reason: TutoringReason, $description:String) {
-    startVisit(input: {aNumber: $aNumber, crn: $crn, reason: $reason, description:$description}) {
-      visit {
+const CREATE_SESSION_MUTATION = gql`
+  mutation startSession($aNumber: String!, $crn:Int!, $reason: TutoringReason, $description:String) {
+    startSession(input: {aNumber: $aNumber, crn: $crn, reason: $reason, description:$description}) {
+      session {
         nodeId
         id
         description
@@ -25,7 +25,7 @@ const CREATE_VISIT_MUTATION = gql`
   }
 `;
 
-const enhance = compose(graphql(CREATE_VISIT_MUTATION));
+const enhance = compose(graphql(CREATE_SESSION_MUTATION));
 
 class StudentCheckIn extends React.Component {
   initialState = {

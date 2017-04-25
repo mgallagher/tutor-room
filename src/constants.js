@@ -1,4 +1,4 @@
-export const visitReasons = new Map([
+export const sessionReasons = new Map([
   ['DEBUGGING', 'Debugging'],
   ['SYNTAX', 'Syntax'],
   ['CONCEPT', 'Concept'],

@@ -12,7 +12,7 @@ const usuColors = {
 // Attempting to follow Material UI color guidelines
 const colors = {
   // Main Colors
-  primary: '#607D8B',
+  primary: usuColors.aggieBlue,
   primaryLight: '#CFD8DC',
   primaryDark: '#455A64',
   accent: '#03A9F4',

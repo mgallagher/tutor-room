@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Button, Card, Header, Grid, Table } from 'semantic-ui-react';
+import { Button, Card, Header, Grid, Label, Table } from 'semantic-ui-react';
 import styled from 'styled-components';
 import { graphql } from 'react-apollo';
 import { compose } from 'recompose';
@@ -7,6 +7,17 @@ import gql from 'graphql-tag';
 import moment from 'moment';
 
 import { visitReasons } from '../../constants';
+
+const visitFragment = gql`
+  fragment VisitFragment on Visit {
+  id
+  nodeId
+  reason
+  studentByStudentId {
+    fullName
+  }
+}
+`;
 
 const QUEUE_QUERY = gql`
   query {
@@ -63,7 +74,8 @@ const FINISH_VISIT_MUTATION = gql`
 `;
 
 const SqueezedWrapper = styled.div`
-  max-width: 90%;
+  max-width: 80%;
+  margin: 0 auto;
 `;
 
 const enhance = compose(
@@ -97,6 +109,61 @@ const QueueRow = ({ visit, handleClick }) => {
         {description}
       </Table.Cell>
     </Table.Row>
+  );
+};
+
+const QueueCard = ({ visit, handleClick, raised }) => {
+  const { studentByStudentId, classByCrn, reason, description, timeIn } = visit;
+  return (
+    <Card raised={raised}>
+      <Card.Content>
+        <Label color="blue" corner />
+        <Card.Header>
+          {
+            `${studentByStudentId.fullName} - ${classByCrn.courseByCourseNumber.courseNumber}`
+          }
+        </Card.Header>
+        <Card.Meta>
+          {moment(timeIn).fromNow()}
+        </Card.Meta>
+        <Card.Description>
+          {description}
+        </Card.Description>
+      </Card.Content>
+      <Card.Content extra>
+        <div className="ui two buttons">
+          <Button basic color="green" onClick={handleClick}>Claim</Button>
+        </div>
+      </Card.Content>
+    </Card>
+  );
+};
+
+const CurrentSessionCard = ({ visit, handleClick, raised }) => {
+  const { studentByStudentId, classByCrn, reason, description, timeIn } = visit;
+  return (
+    <Card raised={raised}>
+      <Card.Content>
+        <Label color="blue" corner />
+        <Card.Header>
+          {
+            `${studentByStudentId.fullName} - ${classByCrn.courseByCourseNumber.courseNumber}`
+          }
+        </Card.Header>
+        <Card.Meta>
+          {moment(timeIn).fromNow()}
+        </Card.Meta>
+        <Card.Description>
+          {description}
+        </Card.Description>
+      </Card.Content>
+      <Card.Content extra>
+        <div className="ui two buttons">
+          <Button basic color="red" onClick={handleClick}>Requeue</Button>
+          <Button basic color="green" onClick={handleClick}>End Session</Button>
+        </div>
+      </Card.Content>
+    </Card>
   );
 };
 
@@ -140,79 +207,58 @@ export class Queue extends React.Component {
     const priorVisit = ({ timeClaimed, timeOut }) => timeClaimed && timeOut;
 
     return (
-      <Grid centered columns={1} textAlign="left">
-        <SqueezedWrapper>
-          {/* Current */}
-          <Header as="h4" textAlign="left">Current Session(s)</Header>
-          <Table selectable>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell width={3}>Name</Table.HeaderCell>
-                <Table.HeaderCell width={3}>Class</Table.HeaderCell>
-                <Table.HeaderCell width={3}>Reason</Table.HeaderCell>
-                <Table.HeaderCell width={3}>Waiting</Table.HeaderCell>
-                <Table.HeaderCell width={6}>Description</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {!loading &&
-                allVisits.nodes
-                  .filter(claimedVisit)
-                  .map(visit => (
-                    <QueueRow
-                      handleClick={this.handleCurrentVisitSelect(visit)}
-                      key={visit.nodeId}
-                      visit={visit}
-                    />
-                  ))}
-            </Table.Body>
-          </Table>
-          {/* QUEUE */}
-          <Header as="h4" textAlign="left">Queue</Header>
-          <Table selectable>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell width={3}>Name</Table.HeaderCell>
-                <Table.HeaderCell width={3}>Class</Table.HeaderCell>
-                <Table.HeaderCell width={3}>Reason</Table.HeaderCell>
-                <Table.HeaderCell width={3}>Waiting</Table.HeaderCell>
-                <Table.HeaderCell width={6}>Description</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {!loading &&
-                allVisits.nodes
-                  .filter(unclaimedVisit)
-                  .map(visit => (
-                    <QueueRow
-                      handleClick={this.handleQueueSelect(visit)}
-                      key={visit.nodeId}
-                      visit={visit}
-                    />
-                  ))}
-            </Table.Body>
-          </Table>
-          {/* VISITS */}
-          <Header as="h4" textAlign="left">Prior Sessions</Header>
-          <Table>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell width={3}>Name</Table.HeaderCell>
-                <Table.HeaderCell width={3}>Class</Table.HeaderCell>
-                <Table.HeaderCell width={3}>Reason</Table.HeaderCell>
-                <Table.HeaderCell width={3}>Waiting</Table.HeaderCell>
-                <Table.HeaderCell width={6}>Description</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {!loading &&
-                allVisits.nodes
-                  .filter(priorVisit)
-                  .map(visit => <QueueRow key={visit.nodeId} visit={visit} />)}
-            </Table.Body>
-          </Table>
-        </SqueezedWrapper>
-      </Grid>
+      <SqueezedWrapper>
+        {/* CURRENT */}
+        <Header as="h3" textAlign="left">Current Session(s)</Header>
+        <Card.Group itemsPerRow={3}>
+          {!loading &&
+            allVisits.nodes
+              .filter(claimedVisit)
+              .map((visit, i) => (
+                <CurrentSessionCard
+                  handleClick={this.handleQueueSelect(visit)}
+                  key={visit.nodeId}
+                  visit={visit}
+                  raised={i === 0}
+                />
+              ))}
+        </Card.Group>
+
+        {/* QUEUE */}
+        <Header as="h3" textAlign="left">Queue</Header>
+        <Card.Group itemsPerRow={3}>
+          {!loading &&
+            allVisits.nodes
+              .filter(unclaimedVisit)
+              .map((visit, i) => (
+                <QueueCard
+                  handleClick={this.handleQueueSelect(visit)}
+                  key={visit.nodeId}
+                  visit={visit}
+                  raised={i === 0}
+                />
+              ))}
+        </Card.Group>
+        {/* VISITS */}
+        <Header as="h3" textAlign="left">Prior Sessions</Header>
+        <Table>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell width={3}>Name</Table.HeaderCell>
+              <Table.HeaderCell width={3}>Class</Table.HeaderCell>
+              <Table.HeaderCell width={3}>Reason</Table.HeaderCell>
+              <Table.HeaderCell width={3}>Waiting</Table.HeaderCell>
+              <Table.HeaderCell width={6}>Description</Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {!loading &&
+              allVisits.nodes
+                .filter(priorVisit)
+                .map(visit => <QueueRow key={visit.nodeId} visit={visit} />)}
+          </Table.Body>
+        </Table>
+      </SqueezedWrapper>
     );
   }
 }

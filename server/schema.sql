@@ -35,23 +35,31 @@ CREATE TABLE tutor_room.student_class (
   PRIMARY KEY (student_id, crn)
 );
 
-CREATE TYPE tutor_room.tutoring_reason AS ENUM (
+CREATE TYPE tutor_room.session_reason AS ENUM (
   'debugging',
   'syntax',
   'concept',
   'program_design'
 );
 
+CREATE TYPE tutor_room.session_tag AS ENUM (
+  'debugging',
+  'functions',
+  'classes'
+)
+
 CREATE TABLE tutor_room.session (
   id           SERIAL PRIMARY KEY,
   student_id   INTEGER NOT NULL REFERENCES tutor_room.student (id),
   crn          INTEGER NOT NULL REFERENCES tutor_room.class (crn),
-  reason       tutor_room.tutoring_reason,
+  reason       tutor_room.session_reason,
   tutor_id     INTEGER REFERENCES tutor_room_private.tutor (id),
   time_in      TIMESTAMPTZ DEFAULT now(), -- Time the student queues up for help
   time_claimed TIMESTAMPTZ, -- Time the tutor claims the student
   time_out     TIMESTAMPTZ, -- Time the student leaves
   description  TEXT,
+  tutor_tag    tutor_room.session_tag,
+  tutor_notes  TEXT,
   requeued     BOOLEAN DEFAULT FALSE NOT NULL
 );
 

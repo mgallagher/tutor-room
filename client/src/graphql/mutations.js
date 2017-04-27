@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const CreateSession = gql`
-  mutation startSession($aNumber: String!, $crn:Int!, $reason: TutoringReason, $description:String) {
+  mutation startSession($aNumber: String!, $crn:Int!, $reason: SessionReason, $description:String) {
     startSession(input: {aNumber: $aNumber, crn: $crn, reason: $reason, description:$description}) {
       session {
         nodeId

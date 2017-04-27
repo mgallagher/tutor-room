@@ -26,8 +26,8 @@ export const ClaimSession = gql`
 `;
 
 export const FinishSession = gql`
-  mutation finishSession($sessionId: Int!) {
-    finishSession(input:{sessionId: $sessionId}) {
+  mutation finishSession($sessionId: Int!, $tag: SessionTag!, $notes: String) {
+    finishSession(input:{sessionId: $sessionId, tag: $tag, notes: $notes}) {
       session {
         nodeId
         id

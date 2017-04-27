@@ -20,25 +20,25 @@ WHERE
 RETURNING *
 $$ LANGUAGE SQL VOLATILE;
 
-CREATE OR REPLACE FUNCTION tutor_room.finish_session(session_id INTEGER, requeued BOOLEAN default false)
+CREATE FUNCTION tutor_room.finish_session(session_id INTEGER, tag tutor_room.session_tag default NULL, notes TEXT default NULL, requeued BOOLEAN default false)
   RETURNS tutor_room.session AS $$
 UPDATE
   tutor_room.session
 SET
-  (time_out, requeued) = (current_timestamp, $2)
+  (time_out, tutor_tag, tutor_notes, requeued) = (current_timestamp, $2, $3, $4)
 WHERE
   id = $1
 RETURNING *
 $$ LANGUAGE SQL VOLATILE;
 
-CREATE OR REPLACE FUNCTION tutor_room.delete_session(session_id INTEGER)
+CREATE FUNCTION tutor_room.delete_session(session_id INTEGER)
   RETURNS tutor_room.session AS $$
 DELETE FROM tutor_room.session
 WHERE id = $1
 RETURNING *
 $$ LANGUAGE SQL VOLATILE;
 
-CREATE OR REPLACE FUNCTION tutor_room.requeue_session(session_id INTEGER)
+CREATE FUNCTION tutor_room.requeue_session(session_id INTEGER)
   RETURNS setof tutor_room.session AS $$
   WITH
       finished_session AS (

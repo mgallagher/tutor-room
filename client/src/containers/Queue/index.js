@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Header, Table } from 'semantic-ui-react';
+import { Card, Header, Table, Modal } from 'semantic-ui-react';
 import styled from 'styled-components';
 import { graphql } from 'react-apollo';
 import { compose } from 'recompose';
@@ -7,6 +7,7 @@ import { compose } from 'recompose';
 import CurrentSessionCard from './CurrentSessionCard';
 import PriorSessionRow from './PriorSessionRow';
 import QueueCard from './QueueCard';
+import FinishSessionForm from './FinishSession';
 import { AllSessions } from '../../graphql/queries';
 import { ClaimSession, FinishSession, DeleteSession } from '../../graphql/mutations';
 
@@ -23,7 +24,21 @@ const enhance = compose(
 );
 
 export class Queue extends React.Component {
-  handleQueueSelect = session => async event => {
+  initialState = {
+    modalOpen: false,
+    session: {},
+    sessionTag: null,
+    sessionNotes: null,
+  };
+  state = this.initialState;
+
+  handleFormChange = (e, { name, value }) => this.setState({ [name]: value });
+  handleModalClose = event =>
+    this.setState({
+      ...this.initialState,
+    });
+
+  handleClaimSession = session => async event => {
     await this.props.claimSession({
       variables: { sessionId: session.id, tutorId: 1 },
       optimisticResponse: {
@@ -38,20 +53,32 @@ export class Queue extends React.Component {
   };
 
   handleEndSessionClick = session => async event => {
-    await this.props.finishSession({
-      variables: { sessionId: session.id },
+    this.setState({ modalOpen: true, session: session });
+  };
+
+  handleEndSessionSubmit = event => {
+    event.preventDefault();
+    this.props.finishSession({
+      variables: {
+        sessionId: this.state.session.id,
+        tag: this.state.sessionTag,
+        notes: this.state.sessionNotes,
+      },
       optimisticResponse: {
         finishSession: {
           session: {
-            ...session,
+            ...this.state.session,
             timeOut: true,
           },
         },
       },
     });
+    this.setState({
+      ...this.initialState,
+    });
   };
 
-  handleRequeueClick = session => event => {
+  handleRequeueSession = session => event => {
     console.log('requeue', session);
   };
 
@@ -86,6 +113,14 @@ export class Queue extends React.Component {
     return (
       <SqueezedWrapper>
         {/* CURRENT SESSIONS */}
+        {this.state.modalOpen &&
+          <Modal open onClose={this.handleModalClose} size="small">
+            <FinishSessionForm
+              onChange={this.handleFormChange}
+              checked={this.state.sessionTag}
+              onSubmit={this.handleEndSessionSubmit}
+            />
+          </Modal>}
         <Header as="h3" textAlign="left">Current Session(s)</Header>
         <Card.Group itemsPerRow={3}>
           {!loading &&
@@ -93,8 +128,8 @@ export class Queue extends React.Component {
               .filter(claimedSession)
               .map((session, i) => (
                 <CurrentSessionCard
-                  handleRequeueClick={this.handleRequeueClick(session)}
-                  handleEndSessionClick={this.handleEndSessionClick(session)}
+                  handleRequeueSession={this.handleRequeueSession(session)}
+                  handleEndSession={this.handleEndSessionClick(session)}
                   key={session.nodeId}
                   session={session}
                   raised={i === 0}
@@ -111,7 +146,7 @@ export class Queue extends React.Component {
               .map((session, i) => (
                 <QueueCard
                   handleDeleteClick={this.handleDeleteSession(session)}
-                  handleClaimClick={this.handleQueueSelect(session)}
+                  handleClaimClick={this.handleClaimSession(session)}
                   key={session.nodeId}
                   session={session}
                   raised={i === 0}

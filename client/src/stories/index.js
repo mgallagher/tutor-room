@@ -3,8 +3,8 @@ import { addDecorator, storiesOf, action, linkTo } from '@kadira/storybook';
 import styled from 'styled-components';
 
 import Welcome from './Welcome';
-import NavBar from '../components/NavBar'
-import { Queue } from '../containers/Queue'
+import NavBar from '../components/NavBar';
+import FinishSessionForm from '../containers/Queue/FinishSession';
 
 const StoryWrapper = styled.div`
   padding: 10px;
@@ -26,11 +26,10 @@ storiesOf('Welcome', module)
 
 storiesOf('Navigation Bar', module)
   .add('Logged out', () => (
-    <NavBar />
+    <p>Hello!</p>
   ));
 
-storiesOf('Queue', module)
-  .add('Actual queue', () => (
-    <Queue
-    />
+storiesOf('Sessions', module)
+  .add('Finish Session Form', () => (
+    <FinishSessionForm checked="debugging" />
   ));

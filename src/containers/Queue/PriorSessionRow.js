@@ -4,7 +4,7 @@ import moment from 'moment';
 
 import { sessionReasons } from '../../constants';
 
-export const QueueRow = ({ session, handleClick }) => {
+const PriorSessionRow = ({ session, handleClick }) => {
   const { studentByStudentId, classByCrn, reason, description, timeIn } = session;
   return (
     <Table.Row onClick={handleClick}>
@@ -31,3 +31,5 @@ export const QueueRow = ({ session, handleClick }) => {
     </Table.Row>
   );
 };
+
+export default PriorSessionRow;

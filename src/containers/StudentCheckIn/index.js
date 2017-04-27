@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import { compose } from 'recompose';
 import { Grid, Header } from 'semantic-ui-react';
@@ -8,24 +7,13 @@ import { Grid, Header } from 'semantic-ui-react';
 import EnterAggieNumber from './EnterAggieNumber';
 import SelectClass from './SelectClass';
 import EnterDescription from './EnterDescription';
+import { CreateSession } from '../../graphql/mutations';
 
 const SqueezedColumn = styled(Grid.Column)`
   max-width: 450px;
 `;
 
-const CREATE_SESSION_MUTATION = gql`
-  mutation startSession($aNumber: String!, $crn:Int!, $reason: TutoringReason, $description:String) {
-    startSession(input: {aNumber: $aNumber, crn: $crn, reason: $reason, description:$description}) {
-      session {
-        nodeId
-        id
-        description
-      }
-    }
-  }
-`;
-
-const enhance = compose(graphql(CREATE_SESSION_MUTATION));
+const enhance = compose(graphql(CreateSession));
 
 class StudentCheckIn extends React.Component {
   initialState = {
@@ -33,7 +21,7 @@ class StudentCheckIn extends React.Component {
     crn: 0,
     description: '',
     reason: '',
-    submitted: false
+    submitted: false,
   };
   state = this.initialState;
 
@@ -43,7 +31,7 @@ class StudentCheckIn extends React.Component {
     event.preventDefault();
     const { aNumber, crn, description, reason } = this.state;
     await this.props.mutate({
-      variables: { aNumber, crn, description, reason }
+      variables: { aNumber, crn, description, reason },
     });
     this.setState({ submitted: true });
     setTimeout(() => this.setState(this.initialState), 3000);
@@ -54,10 +42,7 @@ class StudentCheckIn extends React.Component {
       <Grid centered columns={1} textAlign="left">
         {!this.state.submitted &&
           <SqueezedColumn>
-            <EnterAggieNumber
-              value={this.state.aNumber}
-              onChange={this.handleChange}
-            />
+            <EnterAggieNumber value={this.state.aNumber} onChange={this.handleChange} />
             {this.state.aNumber.length === 9 &&
               <SelectClass
                 aNumber={this.state.aNumber}

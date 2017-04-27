@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Form, Segment } from 'semantic-ui-react';
 
 const EnterAggieNumber = ({ value, onChange }) => (
@@ -12,7 +13,7 @@ const EnterAggieNumber = ({ value, onChange }) => (
 
 EnterAggieNumber.propTypes = {
   value: PropTypes.string,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
 };
 
 export default EnterAggieNumber;

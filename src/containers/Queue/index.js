@@ -1,88 +1,14 @@
-import React, { PropTypes } from 'react';
-import { Button, Card, Header, Icon, Grid, Label, Table } from 'semantic-ui-react';
+import React from 'react';
+import { Card, Header, Table } from 'semantic-ui-react';
 import styled from 'styled-components';
 import { graphql } from 'react-apollo';
 import { compose } from 'recompose';
-import gql from 'graphql-tag';
-import moment from 'moment';
 
-import QueueRow from './Row';
-
-const sessionFragment = gql`
-  fragment SessionFragment on Session {
-  id
-  nodeId
-  reason
-  studentByStudentId {
-    fullName
-  }
-}
-`;
-
-const QUEUE_QUERY = gql`
-  query allSessions {
-    allSessions(orderBy:TIME_IN_DESC) {
-      totalCount
-      nodes {
-        id
-        nodeId
-        reason
-        description
-        timeIn
-        timeClaimed
-        timeOut
-        studentByStudentId {
-          fullName
-        }
-        classByCrn {
-          instructor
-          courseByCourseNumber {
-            courseNumber
-          }
-        }
-      }
-    }
-  }
-`;
-
-const CLAIM_SESSION_MUTATION = gql`
-  mutation claimSession($sessionId: Int!, $tutorId:Int!) {
-    claimSession(input:{sessionId: $sessionId, tutorId:$tutorId}) {
-      session {
-        nodeId
-        id
-        timeClaimed
-        timeOut
-        description
-      }
-    }
-  }
-`;
-
-const FINISH_SESSION_MUTATION = gql`
-  mutation finishSession($sessionId: Int!) {
-    finishSession(input:{sessionId: $sessionId}) {
-      session {
-        nodeId
-        id
-        timeClaimed
-        timeOut
-        description
-      }
-    }
-  }
-`;
-
-const DELETE_SESSION_MUTATION = gql`
-  mutation deleteSession($sessionId: Int!) {
-    deleteSession(input:{sessionId: $sessionId}) {
-      session {
-        nodeId
-        id
-      }
-    }
-  }
-`;
+import CurrentSessionCard from './CurrentSessionCard';
+import PriorSessionRow from './PriorSessionRow';
+import QueueCard from './QueueCard';
+import { AllSessions } from '../../graphql/queries';
+import { ClaimSession, FinishSession, DeleteSession } from '../../graphql/mutations';
 
 const SqueezedWrapper = styled.div`
   max-width: 80%;
@@ -90,65 +16,11 @@ const SqueezedWrapper = styled.div`
 `;
 
 const enhance = compose(
-  graphql(QUEUE_QUERY),
-  graphql(CLAIM_SESSION_MUTATION, { name: 'claimSession' }),
-  graphql(FINISH_SESSION_MUTATION, { name: 'finishSession' }),
-  graphql(DELETE_SESSION_MUTATION, { name: 'deleteSession' })
+  graphql(AllSessions),
+  graphql(ClaimSession, { name: 'claimSession' }),
+  graphql(FinishSession, { name: 'finishSession' }),
+  graphql(DeleteSession, { name: 'deleteSession' })
 );
-
-const QueueCard = ({ session, handleClaimClick, handleDeleteClick, raised }) => {
-  const { studentByStudentId, classByCrn, reason, description, timeIn } = session;
-  return (
-    <Card raised={raised}>
-      <Card.Content>
-        {/*<Label color="blue" attached="top right" />*/}
-        <Button size="tiny" floated="right" onClick={handleDeleteClick} basic icon>
-          <Icon color="red" name="delete" />
-        </Button>
-        <Card.Header>
-          {`${studentByStudentId.fullName} - ${classByCrn.courseByCourseNumber.courseNumber}`}
-        </Card.Header>
-        <Card.Meta>
-          {moment(timeIn).fromNow()}
-        </Card.Meta>
-        <Card.Description>
-          {description}
-        </Card.Description>
-      </Card.Content>
-      <Card.Content extra>
-        <div className="ui two buttons">
-          <Button basic color="green" onClick={handleClaimClick}>Claim</Button>
-        </div>
-      </Card.Content>
-    </Card>
-  );
-};
-
-const CurrentSessionCard = ({ session, handleClick, raised }) => {
-  const { studentByStudentId, classByCrn, description, timeIn } = session;
-  return (
-    <Card raised={raised}>
-      <Card.Content>
-        <Label color="blue" corner />
-        <Card.Header>
-          {`${studentByStudentId.fullName} - ${classByCrn.courseByCourseNumber.courseNumber}`}
-        </Card.Header>
-        <Card.Meta>
-          {moment(timeIn).fromNow()}
-        </Card.Meta>
-        <Card.Description>
-          {description}
-        </Card.Description>
-      </Card.Content>
-      <Card.Content extra>
-        <div className="ui two buttons">
-          <Button basic color="red" onClick={handleClick}>Requeue</Button>
-          <Button basic color="green" onClick={handleClick}>End Session</Button>
-        </div>
-      </Card.Content>
-    </Card>
-  );
-};
 
 export class Queue extends React.Component {
   handleQueueSelect = session => async event => {
@@ -160,7 +32,6 @@ export class Queue extends React.Component {
             ...session,
             timeClaimed: true,
           },
-          __typename: 'ClaimSessionPayload',
         },
       },
     });
@@ -263,7 +134,7 @@ export class Queue extends React.Component {
             {!loading &&
               allSessions.nodes
                 .filter(priorSession)
-                .map(session => <QueueRow key={session.nodeId} session={session} />)}
+                .map(session => <PriorSessionRow key={session.nodeId} session={session} />)}
           </Table.Body>
         </Table>
       </SqueezedWrapper>

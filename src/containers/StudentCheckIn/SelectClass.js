@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Segment, List, Header, Icon } from 'semantic-ui-react';
@@ -25,12 +26,7 @@ export const ClassRow = ({ course, onClick, active }) => {
         {instructor}
       </List.Content>
       <List.Content floated="right">
-        <Icon
-          fitted
-          color={active ? 'green' : 'grey'}
-          name="checkmark"
-          size="large"
-        />
+        <Icon fitted color={active ? 'green' : 'grey'} name="checkmark" size="large" />
       </List.Content>
     </List.Item>
   );
@@ -67,13 +63,13 @@ const SelectClass = ({ data, handleClassClick, selectedClass }) => {
 };
 
 const withData = graphql(STUDENT_CLASSES_QUERY, {
-  options: props => ({ variables: { aNumber: props.aNumber } })
+  options: props => ({ variables: { aNumber: props.aNumber } }),
 });
 
 SelectClass.propTypes = {
   data: PropTypes.object.isRequired,
   handleClassClick: PropTypes.func.isRequired,
-  selectedClass: PropTypes.number
+  selectedClass: PropTypes.number,
 };
 
 export default withData(SelectClass);

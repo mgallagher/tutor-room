@@ -1,11 +1,5 @@
 BEGIN;
 
--- Student's full name
-CREATE FUNCTION tutor_room.student_full_name(student tutor_room.student)
-  RETURNS TEXT AS $$
-SELECT student.first_name || ' ' || student.last_name
-$$ LANGUAGE SQL STABLE;
-
 -- Mutation functions
 CREATE FUNCTION tutor_room.start_session(a_number TEXT, crn INTEGER, reason tutor_room.tutoring_reason, description TEXT)
   RETURNS tutor_room.session AS $$
@@ -34,6 +28,13 @@ SET
   (time_out, requeued) = (current_timestamp, $2)
 WHERE
   id = $1
+RETURNING *
+$$ LANGUAGE SQL VOLATILE;
+
+CREATE OR REPLACE FUNCTION tutor_room.delete_session(session_id INTEGER)
+  RETURNS tutor_room.session AS $$
+DELETE FROM tutor_room.session
+WHERE id = $1
 RETURNING *
 $$ LANGUAGE SQL VOLATILE;
 

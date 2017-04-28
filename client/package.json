@@ -9,6 +9,7 @@
   "dependencies": {
     "apollo-client": "^1.0.4",
     "graphql-tag": "^2.0.0",
+    "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "react": "^15.5.4",
     "react-apollo": "^1.1.1",

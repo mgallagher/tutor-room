@@ -18,6 +18,7 @@ export const AverageWait = gql`
   query {
     latestAverageWait {
       minutes
+      hours
     }
   }
 `;

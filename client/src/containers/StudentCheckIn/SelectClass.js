@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Segment, List, Header, Icon } from 'semantic-ui-react';
@@ -17,7 +18,11 @@ const STUDENT_CLASSES_QUERY = gql`
   }
 `;
 
-export const ClassRow = ({ course, onClick, active }) => {
+const LoadingSegment = styled(Segment)`
+  min-height: 100px;
+`;
+
+const ClassRow = ({ course, onClick, active }) => {
   const { name, instructor, crn } = course;
   return (
     <List.Item active={active} onClick={onClick(crn)}>
@@ -35,7 +40,7 @@ export const ClassRow = ({ course, onClick, active }) => {
 const SelectClass = ({ data, handleClassClick, selectedClass }) => {
   const { allStudentCourses, loading } = data;
   if (loading) {
-    return <Segment loading />;
+    return <LoadingSegment loading />;
   }
   const studentCourses = allStudentCourses.nodes;
   if (!studentCourses.length) {

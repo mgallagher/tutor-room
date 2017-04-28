@@ -13,3 +13,11 @@ export const AllSessions = gql`
   }
   ${SessionData}
 `;
+
+export const AverageWait = gql`
+  query {
+    latestAverageWait {
+      minutes
+    }
+  }
+`;

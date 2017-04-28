@@ -2,18 +2,41 @@ import React from 'react';
 import styled from 'styled-components';
 import { graphql } from 'react-apollo';
 import { compose } from 'recompose';
-import { Grid, Header } from 'semantic-ui-react';
+import { Grid, Header, Label, Icon } from 'semantic-ui-react';
 
 import EnterAggieNumber from './EnterAggieNumber';
 import SelectClass from './SelectClass';
 import EnterDescription from './EnterDescription';
 import { CreateSession } from '../../graphql/mutations';
+import { AverageWait } from '../../graphql/queries';
 
 const SqueezedColumn = styled(Grid.Column)`
   max-width: 450px;
 `;
 
+const FlexCenter = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
 const enhance = compose(graphql(CreateSession));
+
+const AverageWaitLabel = ({ data }) => {
+  const { latestAverageWait, loading } = data;
+  return (
+    <Label size="big">
+      <Icon name="wait" />
+      Average wait:
+      <Label.Detail>
+        {loading ? '...' : `${latestAverageWait.minutes} minutes`}
+      </Label.Detail>
+    </Label>
+  );
+};
+
+export const AverageWaitWithData = graphql(AverageWait, { options: { pollInterval: 5000 } })(
+  AverageWaitLabel
+);
 
 class StudentCheckIn extends React.Component {
   initialState = {
@@ -42,6 +65,9 @@ class StudentCheckIn extends React.Component {
       <Grid centered columns={1} textAlign="left">
         {!this.state.submitted &&
           <SqueezedColumn>
+          <FlexCenter>
+            <AverageWaitWithData />
+          </FlexCenter>
             <EnterAggieNumber value={this.state.aNumber} onChange={this.handleChange} />
             {this.state.aNumber.length === 9 &&
               <SelectClass

@@ -56,6 +56,15 @@ CREATE FUNCTION tutor_room.requeue_session(session_id INTEGER)
   SELECT * FROM copied_session;
 $$ LANGUAGE SQL VOLATILE;
 
+CREATE FUNCTION tutor_room.latest_average_wait()
+  RETURNS INTERVAL AS $$
+  WITH completed_sessions AS (
+    SELECT * FROM tutor_room.session WHERE time_in IS NOT NULL AND time_claimed IS NOT NULL AND time_out IS NOT NULL
+  )
+  SELECT AVG(time_claimed - time_in) average_wait FROM completed_sessions
+$$
+LANGUAGE SQL STABLE;
+
 -- Only for development purposes!
 CREATE FUNCTION reset_sessions() returns void
 LANGUAGE SQL

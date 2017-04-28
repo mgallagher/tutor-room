@@ -9,7 +9,12 @@ import PriorSessionRow from './PriorSessionRow';
 import QueueCard from './QueueCard';
 import FinishSessionForm from './FinishSessionForm';
 import { AllSessions } from '../../graphql/queries';
-import { ClaimSession, FinishSession, DeleteSession } from '../../graphql/mutations';
+import {
+  ClaimSession,
+  FinishSession,
+  DeleteSession,
+  CreateSession,
+} from '../../graphql/mutations';
 
 const SqueezedWrapper = styled.div`
   max-width: 80%;
@@ -20,7 +25,8 @@ const enhance = compose(
   graphql(AllSessions),
   graphql(ClaimSession, { name: 'claimSession' }),
   graphql(FinishSession, { name: 'finishSession' }),
-  graphql(DeleteSession, { name: 'deleteSession' })
+  graphql(DeleteSession, { name: 'deleteSession' }),
+  graphql(CreateSession, { name: 'createSession' })
 );
 
 export class Queue extends React.Component {
@@ -79,7 +85,40 @@ export class Queue extends React.Component {
   };
 
   handleRequeueSession = session => event => {
-    console.log('requeue', session);
+    this.props.finishSession({
+      variables: {
+        sessionId: session.id,
+        requeued: true,
+      },
+      optimisticResponse: {
+        finishSession: {
+          session: {
+            ...session,
+            timeOut: true,
+          },
+        },
+      },
+    });
+    this.props.createSession({
+      variables: {
+        aNumber: session.studentByStudentId.aNumber, // TODO: Just use the student id for this mutation
+        crn: session.crn,
+        reason: session.reason,
+        description: session.description,
+      },
+      updateQueries: {
+        allSessions: (previousResult, { mutationResult }) => {
+          return {
+            allSessions: {
+              nodes: [
+                ...previousResult.allSessions.nodes,
+                mutationResult.data.startSession.session,
+              ],
+            },
+          };
+        },
+      },
+    });
   };
 
   handleDeleteSession = session => async event => {

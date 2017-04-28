@@ -7,7 +7,7 @@ import { compose } from 'recompose';
 import CurrentSessionCard from './CurrentSessionCard';
 import PriorSessionRow from './PriorSessionRow';
 import QueueCard from './QueueCard';
-import FinishSessionForm from './FinishSession';
+import FinishSessionForm from './FinishSessionForm';
 import { AllSessions } from '../../graphql/queries';
 import { ClaimSession, FinishSession, DeleteSession } from '../../graphql/mutations';
 

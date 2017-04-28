@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Card, Icon} from 'semantic-ui-react';
+import { Button, Card } from 'semantic-ui-react';
 import moment from 'moment';
 
 const QueueCard = ({ session, handleClaimClick, handleDeleteClick, raised }) => {
@@ -7,10 +7,15 @@ const QueueCard = ({ session, handleClaimClick, handleDeleteClick, raised }) => 
   return (
     <Card raised={raised}>
       <Card.Content>
-        {/*<Label color="blue" attached="top right" />*/}
-        <Button size="tiny" floated="right" onClick={handleDeleteClick} basic icon>
-          <Icon color="red" name="delete" />
-        </Button>
+        <Button
+          basic
+          circular
+          color="red"
+          size="mini"
+          floated="right"
+          icon="delete"
+          onClick={handleDeleteClick}
+        />
         <Card.Header>
           {`${studentByStudentId.fullName} - ${classByCrn.courseByCourseNumber.courseNumber}`}
         </Card.Header>

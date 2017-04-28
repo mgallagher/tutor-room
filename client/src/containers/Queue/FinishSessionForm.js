@@ -1,11 +1,11 @@
 import React from 'react';
-import { Segment, Form, Label } from 'semantic-ui-react';
+import { Segment, Form } from 'semantic-ui-react';
 
 import { sessionTags } from '../../constants';
 
 const FinishSessionForm = ({ checked, onChange, onSubmit }) => {
   return (
-    <Segment>
+    <Segment padded>
       <h3>Finish Session</h3>
       <Form onSubmit={onSubmit}>
         <Form.Group inline widths="equal">

@@ -57,12 +57,13 @@ CREATE FUNCTION tutor_room.requeue_session(session_id INTEGER)
 $$ LANGUAGE SQL VOLATILE;
 
 -- Only for development purposes!
-CREATE FUNCTION reset_sessions() RETURNS void
+CREATE FUNCTION reset_sessions() returns void
+LANGUAGE SQL
 AS $$
 UPDATE
   tutor_room.session
 SET
-  (time_claimed, time_out) = (NULL, NULL)
-$$ LANGUAGE sql
+  (tutor_id, time_claimed, time_out, tutor_tag, tutor_notes) = (NULL, NULL, NULL, NULL, NULL)
+$$;
 
 COMMIT;

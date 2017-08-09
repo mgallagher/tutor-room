@@ -1,0 +1,11 @@
+{
+  "name": "tutor-room",
+  "version": "1.0.0",
+  "description": "Backend server for the USU tutor-room project",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.15.4",
+    "postgraphql": "^3.4.0"
+  }
+}

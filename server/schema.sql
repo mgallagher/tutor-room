@@ -5,13 +5,12 @@ CREATE SCHEMA tutor_room_private;
 
 -- Any particularly sensitive data should live in the private schema
 CREATE TABLE tutor_room_private.tutor (
-  id            SERIAL PRIMARY KEY,
-  email         TEXT NOT NULL UNIQUE CHECK (email ~* '^.+@.+\..+$'),
+  id            INTEGER PRIMARY KEY,
   password_hash TEXT NOT NULL
 );
 
 CREATE TABLE tutor_room.student (
-  id         SERIAL PRIMARY KEY,
+  id         INTEGER PRIMARY KEY,
   first_name TEXT,
   last_name  TEXT,
   a_number   TEXT NOT NULL UNIQUE, -- Add a check or domain here, possibly move to private schema
@@ -19,19 +18,18 @@ CREATE TABLE tutor_room.student (
 );
 
 CREATE TABLE tutor_room.course (
-  course_number INTEGER PRIMARY KEY,
-  name          TEXT NOT NULL UNIQUE
+  number INTEGER PRIMARY KEY,
+  title  TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE tutor_room.class (
   crn           INTEGER PRIMARY KEY,
-  course_number INTEGER NOT NULL REFERENCES tutor_room.course (course_number) ON DELETE CASCADE,
-  instructor    TEXT    NOT NULL
+  course_number INTEGER NOT NULL REFERENCES tutor_room.course (number) ON DELETE CASCADE
 );
 
 CREATE TABLE tutor_room.student_class (
   student_id INTEGER NOT NULL REFERENCES tutor_room.student (id),
-  crn  INTEGER NOT NULL REFERENCES tutor_room.class (crn),
+  crn        INTEGER NOT NULL REFERENCES tutor_room.class (crn),
   PRIMARY KEY (student_id, crn)
 );
 
@@ -46,7 +44,7 @@ CREATE TYPE tutor_room.session_tag AS ENUM (
   'debugging',
   'functions',
   'classes'
-)
+);
 
 CREATE TABLE tutor_room.session (
   id           SERIAL PRIMARY KEY,
@@ -63,11 +61,11 @@ CREATE TABLE tutor_room.session (
   requeued     BOOLEAN DEFAULT FALSE NOT NULL
 );
 
-CREATE VIEW tutor_room.student_course AS
-  SELECT *
-  FROM tutor_room.course
-    NATURAL JOIN tutor_room.class
-    NATURAL JOIN tutor_room.student_class
-    JOIN tutor_room.student ON student.id = student_class.student_id;
+-- CREATE VIEW tutor_room.student_course AS
+--   SELECT *
+--   FROM tutor_room.course
+--     NATURAL JOIN tutor_room.class
+--     NATURAL JOIN tutor_room.student_class
+--     JOIN tutor_room.student ON student.id = student_class.student_id;
 
 COMMIT;

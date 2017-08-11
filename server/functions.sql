@@ -1,7 +1,7 @@
 BEGIN;
 
 -- Mutation functions
-CREATE FUNCTION tutor_room.start_session(a_number TEXT, crn INTEGER, reason tutor_room.tutoring_reason, description TEXT)
+CREATE FUNCTION tutor_room.start_session(a_number TEXT, crn INTEGER, reason tutor_room.session_reason, description TEXT)
   RETURNS tutor_room.session AS $$
 INSERT INTO
   tutor_room.session (student_id, crn, reason, description, time_in)

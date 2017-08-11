@@ -6,6 +6,8 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.15.4",
+    "passport": "^0.4.0",
+    "passport-cas": "^0.1.1",
     "postgraphql": "^3.4.0"
   }
 }

@@ -1,9 +1,9 @@
-import React from 'react';
-import { Button, Card } from 'semantic-ui-react';
-import moment from 'moment';
+import React from 'react'
+import { Button, Card } from 'semantic-ui-react'
+import moment from 'moment'
 
 const QueueCard = ({ session, handleClaimClick, handleDeleteClick, raised }) => {
-  const { studentByStudentId, classByCrn, description, timeIn } = session;
+  const { studentByStudentId, classByCrn, description, timeIn } = session
   return (
     <Card raised={raised}>
       <Card.Content>
@@ -17,7 +17,10 @@ const QueueCard = ({ session, handleClaimClick, handleDeleteClick, raised }) => 
           onClick={handleDeleteClick}
         />
         <Card.Header>
-          {`${studentByStudentId.fullName} - ${classByCrn.courseByCourseNumber.courseNumber}`}
+          {`${studentByStudentId.firstName} ${studentByStudentId.lastName}`}
+        </Card.Header>
+        <Card.Header>
+          {`${classByCrn.course.number}`}
         </Card.Header>
         <Card.Meta>
           {moment(timeIn).fromNow()}
@@ -28,11 +31,13 @@ const QueueCard = ({ session, handleClaimClick, handleDeleteClick, raised }) => 
       </Card.Content>
       <Card.Content extra>
         <div className="ui two buttons">
-          <Button basic color="green" onClick={handleClaimClick}>Claim</Button>
+          <Button basic color="green" onClick={handleClaimClick}>
+            Claim
+          </Button>
         </div>
       </Card.Content>
     </Card>
-  );
-};
+  )
+}
 
-export default QueueCard;
+export default QueueCard

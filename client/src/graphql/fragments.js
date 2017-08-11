@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import gql from 'graphql-tag'
 
 export const SessionData = gql`
   fragment SessionData on Session {
@@ -12,13 +12,14 @@ export const SessionData = gql`
     timeOut
     studentByStudentId {
       aNumber
-      fullName
+      firstName
+      lastName
     }
     classByCrn {
-      instructor
-      courseByCourseNumber {
-        courseNumber
+      course: courseByCourseNumber {
+        number
+        title
       }
     }
   }
-`;
+`

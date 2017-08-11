@@ -1,11 +1,11 @@
-import React from 'react';
-import { Header, Table } from 'semantic-ui-react';
-import moment from 'moment';
+import React from 'react'
+import { Header, Table } from 'semantic-ui-react'
+import moment from 'moment'
 
-import { sessionReasons } from '../../constants';
+import { sessionReasons } from '../../constants'
 
 const PriorSessionRow = ({ session, handleClick }) => {
-  const { studentByStudentId, classByCrn, reason, description, timeIn } = session;
+  const { studentByStudentId, classByCrn, reason, description, timeIn } = session
   return (
     <Table.Row onClick={handleClick}>
       <Table.Cell>
@@ -14,8 +14,10 @@ const PriorSessionRow = ({ session, handleClick }) => {
       <Table.Cell>
         <Header as="h4">
           <Header.Content>
-            {classByCrn.courseByCourseNumber.courseNumber}
-            <Header.Subheader>{classByCrn.instructor}</Header.Subheader>
+            {classByCrn.course.number}
+            <Header.Subheader>
+              {classByCrn.instructor}
+            </Header.Subheader>
           </Header.Content>
         </Header>
       </Table.Cell>
@@ -29,7 +31,7 @@ const PriorSessionRow = ({ session, handleClick }) => {
         {description}
       </Table.Cell>
     </Table.Row>
-  );
-};
+  )
+}
 
-export default PriorSessionRow;
+export default PriorSessionRow

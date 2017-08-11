@@ -1,14 +1,14 @@
-import React from 'react';
-import { Button, Card } from 'semantic-ui-react';
-import moment from 'moment';
+import React from 'react'
+import { Button, Card } from 'semantic-ui-react'
+import moment from 'moment'
 
 const CurrentSessionCard = ({ session, handleEndSession, handleRequeueSession, raised }) => {
-  const { studentByStudentId, classByCrn, description, timeIn } = session;
+  const { studentByStudentId, classByCrn, description, timeIn } = session
   return (
     <Card raised={raised}>
       <Card.Content>
         <Card.Header>
-          {`${studentByStudentId.fullName} - ${classByCrn.courseByCourseNumber.courseNumber}`}
+          {`${studentByStudentId.fullName} - ${classByCrn.course.number}`}
         </Card.Header>
         <Card.Meta>
           {moment(timeIn).fromNow()}
@@ -19,12 +19,16 @@ const CurrentSessionCard = ({ session, handleEndSession, handleRequeueSession, r
       </Card.Content>
       <Card.Content extra>
         <div className="ui two buttons">
-          <Button basic color="red" onClick={handleRequeueSession}>Requeue</Button>
-          <Button basic color="green" onClick={handleEndSession}>End Session</Button>}
+          <Button basic color="red" onClick={handleRequeueSession}>
+            Requeue
+          </Button>
+          <Button basic color="green" onClick={handleEndSession}>
+            End Session
+          </Button>}
         </div>
       </Card.Content>
     </Card>
-  );
-};
+  )
+}
 
-export default CurrentSessionCard;
+export default CurrentSessionCard

@@ -1,14 +1,14 @@
 INSERT INTO
-  tutor_room.course (course_number, name)
+  tutor_room.course (number, title)
 VALUES
-  ('1400', 'Introduction to Computer Science - CS1'),
-  ('1410', 'Introduction to Computer Science - CS2'),
-  ('1440', 'Methods in Computer Science');
+  ('1400', 'INTRO TO COMPUTER SCIENCE'),
+  ('5700', 'OBJECT-ORIENTED SOFTWARE DEV'),
+  ('5800', 'INTRO TO DATABASE SYSTEMS');
 
 INSERT INTO
-  tutor_room.class (crn, course_number, instructor)
+  tutor_room.class (crn, course_number)
 VALUES
-  ('10925', '1400', 'Jacob Christiansen'),
-  ('12986', '1400', 'Apoorva Chauhan'),
-  ('10937', '1410', 'James Mathias'),
-  ('14472', '1440', 'Stephen Clyde');
+  ('10925', '1400'),
+  ('12986', '1400'),
+  ('10937', '5700'),
+  ('14472', '5800');

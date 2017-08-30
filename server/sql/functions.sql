@@ -1,15 +1,25 @@
 BEGIN;
 
+create function something.current_a_number() returns int as $$
+select current_setting('jwt.claims.a_number')::int;
+$$ language sql stable;
+
 -- Mutation functions
-CREATE FUNCTION tutor_room.start_session(a_number TEXT, crn INTEGER, reason tutor_room.session_reason, description TEXT)
+CREATE FUNCTION tutor_room_private.start_session(a_number TEXT, crn INTEGER, reason tutor_room.session_reason, description TEXT)
   RETURNS tutor_room.session AS $$
 INSERT INTO
   tutor_room.session (student_id, crn, reason, description, time_in)
-  SELECT id AS student_id, $2, $3, $4, current_timestamp FROM tutor_room.student WHERE a_number = $1
+  SELECT id AS student_id, $2, $3, $4, current_timestamp FROM tutor_room.student as a WHERE a.a_number = start_session.a_number
 RETURNING *
 $$ LANGUAGE SQL VOLATILE;
 
-CREATE FUNCTION tutor_room.claim_session(session_id INTEGER, tutor_id INTEGER)
+CREATE FUNCTION tutor_room.start_session(crn INTEGER, reason tutor_room.session_reason, description TEXT)
+  RETURNS tutor_room.session AS $$
+SELECT tutor_room_private.start_session(current_a_number(), $1, $2, $3)
+$$ LANGUAGE SQL VOLATILE
+
+
+CREATE FUNCTION tutor_room_private.claim_session(session_id INTEGER, tutor_id INTEGER)
   RETURNS tutor_room.session AS $$
 UPDATE
   tutor_room.session
@@ -20,7 +30,13 @@ WHERE
 RETURNING *
 $$ LANGUAGE SQL VOLATILE;
 
-CREATE FUNCTION tutor_room.finish_session(session_id INTEGER, tag tutor_room.session_tag default NULL, notes TEXT default NULL, requeued BOOLEAN default false)
+CREATE FUNCTION tutor_room.claim_session(session_id INTEGER)
+  RETURNS tutor_room.session AS $$
+SELECT tutor_room_private.claim_session($1, current_setting('jwt.claims.usu_id'))
+$$ LANGUAGE SQL VOLATILE;
+
+
+CREATE FUNCTION tutor_room_private.finish_session(session_id INTEGER, tag tutor_room.session_tag default NULL, notes TEXT default NULL, requeued BOOLEAN default false)
   RETURNS tutor_room.session AS $$
 UPDATE
   tutor_room.session
@@ -31,12 +47,19 @@ WHERE
 RETURNING *
 $$ LANGUAGE SQL VOLATILE;
 
-CREATE FUNCTION tutor_room.delete_session(session_id INTEGER)
+CREATE FUNCTION tutor_room.finish_session(session_id INTEGER, tag tutor_room.session_tag default NULL, notes TEXT default NULL, requeued BOOLEAN default false)
+  RETURNS tutor_room.session AS $$
+SELECT tutor_room_private.finish_session($1, $2, $3, $4)
+$$ LANGUAGE SQL VOLATILE;
+
+
+CREATE FUNCTION tutor_room_private.delete_session(session_id INTEGER)
   RETURNS tutor_room.session AS $$
 DELETE FROM tutor_room.session
 WHERE id = $1
 RETURNING *
 $$ LANGUAGE SQL VOLATILE;
+
 
 CREATE FUNCTION tutor_room.requeue_session(session_id INTEGER)
   RETURNS setof tutor_room.session AS $$

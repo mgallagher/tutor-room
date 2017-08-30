@@ -4,27 +4,42 @@ CREATE SCHEMA tutor_room;
 CREATE SCHEMA tutor_room_private;
 
 -- Any particularly sensitive data should live in the private schema
+CREATE TYPE tutor_room_private.jwt_token as (
+  usu_id   INTEGER,
+  a_number TEXT,
+  role     TEXT
+);
+
+CREATE TABLE tutor_room_private.term (
+  code        TEXT PRIMARY KEY,
+  description TEXT NOT NULL,
+  start_date  DATE NOT NULL,
+  end_date    DATE NOT NULL
+);
+
 CREATE TABLE tutor_room_private.tutor (
-  id            INTEGER PRIMARY KEY,
-  password_hash TEXT NOT NULL
+  id       INTEGER PRIMARY KEY,
+  a_number TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE tutor_room.student (
-  id         INTEGER PRIMARY KEY,
-  first_name TEXT,
-  last_name  TEXT,
-  a_number   TEXT NOT NULL UNIQUE, -- Add a check or domain here, possibly move to private schema
-  created    TIMESTAMPTZ DEFAULT now()
+  id             INTEGER PRIMARY KEY,
+  a_number       TEXT NOT NULL UNIQUE,
+  first_name     TEXT,
+  last_name      TEXT,
+  preferred_name TEXT,
+  created        TIMESTAMPTZ DEFAULT now()
 );
 
 CREATE TABLE tutor_room.course (
   number INTEGER PRIMARY KEY,
-  title  TEXT NOT NULL UNIQUE
+  title  TEXT NOT NULL
 );
 
 CREATE TABLE tutor_room.class (
   crn           INTEGER PRIMARY KEY,
-  course_number INTEGER NOT NULL REFERENCES tutor_room.course (number) ON DELETE CASCADE
+  course_number INTEGER NOT NULL REFERENCES tutor_room.course (number),
+  term_code     TEXT NOT NULL  -- Might want to reference the term table
 );
 
 CREATE TABLE tutor_room.student_class (

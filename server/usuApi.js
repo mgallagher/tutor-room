@@ -4,8 +4,8 @@ const config = require('./config')
 var usuApi = axios.create({
   baseURL: 'https://api.usu.edu/v1/',
   auth: {
-    username: config.usuApiUsername,
-    password: config.usuApiPassword
+    username: config.usuApi.username,
+    password: config.usuApi.password
   }
 })
 

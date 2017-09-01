@@ -1,110 +1,96 @@
 const express = require('express')
 const { postgraphql } = require('postgraphql')
 const passport = require('passport')
-const passport_cas = require('passport-cas')
-const { studentExists, insertStudent } = require('./db')
+const passportCas = require('passport-cas')
+const jwt = require('jsonwebtoken')
+const { studentExists, getStudent, insertStudent } = require('./db')
 const { lookupByAggieNumber, getStudentSchedule } = require('./usuApi')
 const config = require('./config')
 
 var app = express()
 
-app.get('/', function(req, res) {
+app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
 const getOrSyncStudent = async aNumber => {
-  const exists = await studentExists(aNumber)
-  if (!exists) {
+  const student = await getStudent(aNumber)
+  if (student !== undefined) {
+    console.log(aNumber, 'FOUND in database')
+    return student
+  } else {
     console.log(aNumber, 'not in database')
     var studentDetails = await lookupByAggieNumber(aNumber)
     studentDetails.aNumber = aNumber
     const savedStudent = await insertStudent(studentDetails)
     return savedStudent
-    // const studentSchedule = await getStudentSchedule(studentDetails.id)
-    // const csCourses = studentSchedule.filter(course => course.courseSubject === 'CS')
-    // csCourses.map(course => {})
-    // split data into course, class, and student_class
-  } else {
-    return getStudent(aNumber)
   }
 }
 
 passport.use(
-  new passport_cas.Strategy(
+  new passportCas.Strategy(
     {
       version: 'CAS3.0',
-      ssoBaseURL: 'https://login.usu.edu/cas',
-      serverBaseURL: 'https://komaru.eng.usu.edu/login/cas',
-      useSaml: true
+      // ssoBaseURL: 'https://login.usu.edu/cas',
+      // serverBaseURL: 'https://komaru.eng.usu.edu/login/cas',
+      ssoBaseURL: 'http://localhost:8080/cas',
+      serverBaseURL: 'http://localhost:5000/login/cas'
     },
-    async function(profile, done) {
-      console.log('received user', profile.attributes)
-      const student = await getOrSyncStudent(profile.attributes.cn)
+    async (profile, done) => {
+      const student = await getOrSyncStudent(profile.user)
       return done(null, student)
     }
   )
 )
 
-const LocalStrategy = require('passport-local').Strategy
-passport.use(
-  new LocalStrategy(function(username, password, done) {
-    console.log(username, password)
+const getJWTTokenForUser = (user, role) =>
+  jwt.sign(
+    {
+      aud: 'postgraphql',
+      // role: role,
+      // LEFT OFF HERE - student checkin query is failing
+      usu_id: (user && user.id) || undefined,
+      a_number: (user && user.a_number) || undefined,
+      date_created: new Date().toISOString()
+    },
+    config.jwtSecret
+  )
 
-    // User.findOne({ username: username }, function(err, user) {
-    //   if (err) {
-    //     return done(err)
-    //   }
-    //   if (!user) {
-    //     return done(null, false, { message: 'Incorrect username.' })
-    //   }
-    //   if (!user.validPassword(password)) {
-    //     return done(null, false, { message: 'Incorrect password.' })
-    //   }
-    //   return done(null, user)
-    // })
-  })
-)
-
-app.post(
-  '/login/dev',
-  passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/login',
-    failureFlash: true
-  })
-)
-
-app.use('/login/cas', function(req, res, next) {
-  passport.authenticate('cas', function(err, user, info) {
+app.use('/login/cas', (req, res, next) => {
+  passport.authenticate('cas', (err, user, info) => {
+    console.log('/login/cas', err, user, info)
+    debugger
     if (err) {
       // Add redirect
       return next(err)
     }
-
     if (!user) {
-      req.session.messages = info.message
+      console.log('not user?')
       return res.redirect('/')
     }
-
-    req.logIn(user, function(err) {
-      if (err) {
-        return next(err)
-      }
-      req.session.messages = ''
-      return res.redirect('/')
-    })
+    // TODO: Don't forget about the tutor role
+    const token = getJWTTokenForUser(user, 'student')
+    return res.redirect(`http://localhost:3000/checkin/${token}`)
   })(req, res, next)
 })
 
-app.use(passport.initialize())
-// app.use(
-//   postgraphql('postgres://postgres:@localhost:5432/postgres', 'tutor_room', {
-//     graphiql: config.debug,
-//     disableDefaultMutations: true,
-//     enableCors: true
-//   })
-// )
+app.get('/queue/', (req, res) => {
+  const token = req.query.token
+  return res.send(`received token ${token}`)
+})
 
-app.listen(5000, function() {
+app.use(passport.initialize())
+
+app.use(
+  postgraphql('postgres://postgres:@localhost:5432/postgres', 'tutor_room', {
+    graphiql: config.debug,
+    disableDefaultMutations: true,
+    enableCors: true,
+    jwtSecret: config.jwtSecret,
+    jwtPgTypeIdentifier: 'tutor_room.jwt_token'
+  })
+)
+
+app.listen(5000, () => {
   console.log('Tutor Room server listening on port 5000!')
 })

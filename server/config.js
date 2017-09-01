@@ -1,12 +1,16 @@
 require('dotenv').config()
 const env = process.env.NODE_ENV || 'development'
 
+const usuConfig = {
+  username: process.env.USU_API_USERNAME,
+  password: process.env.USU_API_PASSWORD
+}
+
 const config = {
   development: {
-    graphql_url: 'http://localhost:8000/graphql',
+    graphqlUri: 'http://localhost:8000/graphql',
     jwtSecret: process.env.JWT_SECRET,
-    usuApiUsername: process.env.USU_API_USERNAME,
-    usuApiPassword: process.env.USU_API_PASSWORD,
+    usuApi: usuConfig,
     debug: true,
     database: {
       host: 'localhost',
@@ -16,10 +20,9 @@ const config = {
     }
   },
   production: {
-    graphql_url: 'https://komaru.eng.usu.edu/graphql',
+    graphqlUri: 'https://komaru.eng.usu.edu/graphql',
     jwtSecret: process.env.JWT_SECRET,
-    usuApiUsername: process.env.USU_API_USERNAME,
-    usuApiPassword: process.env.USU_API_PASSWORD,
+    usuApi: usuConfig,
     debug: false,
     database: {
       // host: 'localhost',

@@ -1,60 +1,74 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import { graphql } from 'react-apollo';
-import gql from 'graphql-tag';
-import { Segment, List, Header, Icon } from 'semantic-ui-react';
+import React from 'react'
+import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import { graphql } from 'react-apollo'
+import gql from 'graphql-tag'
+import { Segment, List, Header, Icon } from 'semantic-ui-react'
+
+// const STUDENT_CLASSES_QUERY = gql`
+//   query ClassesForStudent($aNumber: String!) {
+//     allStudentCourses(condition:{aNumber:$aNumber}) {
+//       nodes {
+//         studentId
+//         name
+//         instructor
+//         crn
+//       }
+//     }
+//   }
+// `;
 
 const STUDENT_CLASSES_QUERY = gql`
-  query ClassesForStudent($aNumber: String!) {
-    allStudentCourses(condition:{aNumber:$aNumber}) {
-      nodes {
-        studentId
-        name
-        instructor
-        crn
+  query {
+    currentStudent {
+      courses: studentCoursesByStudentId {
+        nodes {
+          courseByCrn {
+            crn
+            number
+            title
+          }
+        }
       }
     }
   }
-`;
+`
 
-const LoadingSegment = styled(Segment)`
-  min-height: 100px;
-`;
+const LoadingSegment = styled(Segment)`min-height: 100px;`
 
-const ClassRow = ({ course, onClick, active }) => {
-  const { name, instructor, crn } = course;
+const ClassRow = ({ courseByCrn, onClick, active }) => {
   return (
-    <List.Item active={active} onClick={onClick(crn)}>
+    <List.Item active={active} onClick={onClick(courseByCrn.crn)}>
       <List.Content floated="left">
-        <List.Header>{name}</List.Header>
-        {instructor}
+        <List.Header>{courseByCrn.title}</List.Header>
+        {courseByCrn.number}
       </List.Content>
       <List.Content floated="right">
         <Icon fitted color={active ? 'green' : 'grey'} name="checkmark" size="large" />
       </List.Content>
     </List.Item>
-  );
-};
+  )
+}
 
 const SelectClass = ({ data, handleClassClick, selectedClass }) => {
-  const { allStudentCourses, loading } = data;
+  const { currentStudent, loading } = data
+  console.log(currentStudent)
   if (loading) {
-    return <LoadingSegment loading />;
+    return <LoadingSegment loading />
   }
-  const studentCourses = allStudentCourses.nodes;
-  if (!studentCourses.length) {
+  console.log('hellooooo')
+  if (!currentStudent.classes.nodes.length) {
     return (
       <Segment>
         <h3>No Classes Found</h3>
       </Segment>
-    );
+    )
   }
   return (
     <Segment>
       <Header as="h3">Select your class</Header>
       <List selection verticalAlign="middle">
-        {studentCourses.map(course => (
+        {currentStudent.classes.nodes.map(course => (
           <ClassRow
             key={course.crn}
             course={course}
@@ -64,17 +78,13 @@ const SelectClass = ({ data, handleClassClick, selectedClass }) => {
         ))}
       </List>
     </Segment>
-  );
-};
-
-const withData = graphql(STUDENT_CLASSES_QUERY, {
-  options: props => ({ variables: { aNumber: props.aNumber } }),
-});
+  )
+}
 
 SelectClass.propTypes = {
   data: PropTypes.object.isRequired,
   handleClassClick: PropTypes.func.isRequired,
-  selectedClass: PropTypes.number,
-};
+  selectedClass: PropTypes.number
+}
 
-export default withData(SelectClass);
+export default graphql(STUDENT_CLASSES_QUERY)(SelectClass)

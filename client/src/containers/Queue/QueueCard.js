@@ -3,7 +3,7 @@ import { Button, Card } from 'semantic-ui-react'
 import moment from 'moment'
 
 const QueueCard = ({ session, handleClaimClick, handleDeleteClick, raised }) => {
-  const { studentByStudentId, classByCrn, description, timeIn } = session
+  const { studentByStudentId, courseByCrn, description, timeIn } = session
   return (
     <Card raised={raised}>
       <Card.Content>
@@ -19,15 +19,9 @@ const QueueCard = ({ session, handleClaimClick, handleDeleteClick, raised }) => 
         <Card.Header>
           {`${studentByStudentId.firstName} ${studentByStudentId.lastName}`}
         </Card.Header>
-        <Card.Header>
-          {`${classByCrn.course.number}`}
-        </Card.Header>
-        <Card.Meta>
-          {moment(timeIn).fromNow()}
-        </Card.Meta>
-        <Card.Description>
-          {description}
-        </Card.Description>
+        <Card.Header>{`${courseByCrn.number}`}</Card.Header>
+        <Card.Meta>{moment(timeIn).fromNow()}</Card.Meta>
+        <Card.Description>{description}</Card.Description>
       </Card.Content>
       <Card.Content extra>
         <div className="ui two buttons">

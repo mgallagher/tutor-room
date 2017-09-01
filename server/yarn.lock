@@ -28,16 +28,18 @@ ansi-styles@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-2.2.1.tgz#b432dd3358b634cf75e1e4664368240533c1ddbe"
 
+ansi-styles@^3.1.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-3.2.0.tgz#c159b8d5be0f9e5a6f346dab94f16ce022161b88"
+  dependencies:
+    color-convert "^1.9.0"
+
 anymatch@^1.3.0:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/anymatch/-/anymatch-1.3.2.tgz#553dcb8f91e3c889845dfdba34c77721b90b9d7a"
   dependencies:
     micromatch "^2.1.5"
     normalize-path "^2.0.0"
-
-ap@~0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/ap/-/ap-0.2.0.tgz#ae0942600b29912f0d2b14ec60c45e8f330b6110"
 
 aproba@^1.0.3:
   version "1.1.2"
@@ -103,14 +105,7 @@ axios@^0.16.2:
     follow-redirects "^1.2.3"
     is-buffer "^1.1.5"
 
-"babel-runtime@>=6 <7":
-  version "6.25.0"
-  resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.25.0.tgz#33b98eaa5d482bb01a8d1aa6b437ad2b01aec41c"
-  dependencies:
-    core-js "^2.4.0"
-    regenerator-runtime "^0.10.0"
-
-babel-runtime@^6.11.6:
+"babel-runtime@>=6 <7", babel-runtime@^6.11.6:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
   dependencies:
@@ -207,6 +202,14 @@ chalk@1.1.3, chalk@^1.0.0:
     strip-ansi "^3.0.0"
     supports-color "^2.0.0"
 
+chalk@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/chalk/-/chalk-2.1.0.tgz#ac5becf14fa21b99c6c92ca7a7d7cfd5b17e743e"
+  dependencies:
+    ansi-styles "^3.1.0"
+    escape-string-regexp "^1.0.5"
+    supports-color "^4.0.0"
+
 chokidar@^1.4.3:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-1.7.0.tgz#798e689778151c8076b4b360e5edd28cda2bb468"
@@ -229,6 +232,16 @@ co@^4.6.0:
 code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
+
+color-convert@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-1.9.0.tgz#1accf97dd739b983bf994d56fec8f95853641b7a"
+  dependencies:
+    color-name "^1.1.1"
+
+color-name@^1.1.1:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.3.tgz#a7d0558bd89c42f795dd42328f740831ca53bc25"
 
 combined-stream@^1.0.5, combined-stream@~1.0.5:
   version "1.0.5"
@@ -403,7 +416,7 @@ escape-html@~1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/escape-html/-/escape-html-1.0.3.tgz#0258eae4d3d0c0974de1c169188ef0051d1d1988"
 
-escape-string-regexp@^1.0.2:
+escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
 
@@ -707,13 +720,14 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.2:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/graceful-readlink/-/graceful-readlink-1.0.1.tgz#4cafad76bc62f02fa039b2f94e9a3dd3a391a725"
 
-graphile-build-pg@^0.1.0-alpha.23:
-  version "0.1.0-alpha.23"
-  resolved "https://registry.yarnpkg.com/graphile-build-pg/-/graphile-build-pg-0.1.0-alpha.23.tgz#049c586b024777e4789e68834394bd820124a5e9"
+graphile-build-pg@^0.1.0-alpha.27:
+  version "0.1.0-alpha.27"
+  resolved "https://registry.yarnpkg.com/graphile-build-pg/-/graphile-build-pg-0.1.0-alpha.27.tgz#4cdbca69d1bd2f9c5fb52acc252d49ad3e3b5874"
   dependencies:
     babel-runtime ">=6 <7"
+    chalk "^2.1.0"
     debug ">=2 <3"
-    graphile-build "^0.1.0-alpha.18"
+    graphile-build "^0.1.0-alpha.27"
     graphql-iso-date "^3.2.0"
     graphql-type-json "^0.1.4"
     jsonwebtoken "^7.4.1"
@@ -723,14 +737,13 @@ graphile-build-pg@^0.1.0-alpha.23:
     pg-sql2 "^1.0.0-beta.3"
     pluralize "^5.0.0"
 
-graphile-build@^0.1.0-alpha.18:
-  version "0.1.0-alpha.18"
-  resolved "https://registry.yarnpkg.com/graphile-build/-/graphile-build-0.1.0-alpha.18.tgz#467534cc40e23839a2d1a0fdc451c058b35ab47f"
+graphile-build@^0.1.0-alpha.27:
+  version "0.1.0-alpha.27"
+  resolved "https://registry.yarnpkg.com/graphile-build/-/graphile-build-0.1.0-alpha.27.tgz#3f5eab9b67d65e5489f55084ff40d5687cb03dca"
   dependencies:
     babel-runtime ">=6 <7"
     debug ">=2 <3"
     graphql-parse-resolve-info "^0.1.0-alpha.18"
-    graphql-type-json "^0.1.4"
 
 graphql-iso-date@^3.2.0:
   version "3.2.0"
@@ -748,8 +761,8 @@ graphql-type-json@^0.1.4:
   resolved "https://registry.yarnpkg.com/graphql-type-json/-/graphql-type-json-0.1.4.tgz#89f13f5d32ce08c9a76c79fdf9c1968384d81a4e"
 
 "graphql@>=0.6.0 <1.0.0":
-  version "0.10.5"
-  resolved "https://registry.yarnpkg.com/graphql/-/graphql-0.10.5.tgz#c9be17ca2bdfdbd134077ffd9bbaa48b8becd298"
+  version "0.11.2"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-0.11.2.tgz#13edb9f982f3571dd68ec4e9f3d6aca7e1ba57ef"
   dependencies:
     iterall "^1.1.0"
 
@@ -769,6 +782,10 @@ has-ansi@^2.0.0:
   resolved "https://registry.yarnpkg.com/has-ansi/-/has-ansi-2.0.0.tgz#34f5049ce1ecdf2b0649af3ef24e45ed35416d91"
   dependencies:
     ansi-regex "^2.0.0"
+
+has-flag@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/has-flag/-/has-flag-2.0.0.tgz#e8207af1cc7b30d446cc70b734b5e8be18f88d51"
 
 has-unicode@^2.0.0:
   version "2.0.1"
@@ -1008,9 +1025,9 @@ jsonify@~0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/jsonify/-/jsonify-0.0.0.tgz#2c74b6ee41d93ca51b7b5aaee8f503631d252a73"
 
-jsonwebtoken@^7.1.9, jsonwebtoken@^7.4.1:
-  version "7.4.2"
-  resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-7.4.2.tgz#571b903c07e875c0fc59203d1ac78667d80e09cd"
+jsonwebtoken@^7.0.0, jsonwebtoken@^7.1.9, jsonwebtoken@^7.4.1:
+  version "7.4.3"
+  resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-7.4.3.tgz#77f5021de058b605a1783fa1283e99812e645638"
   dependencies:
     joi "^6.10.1"
     jws "^3.1.4"
@@ -1043,6 +1060,10 @@ jws@^3.1.4:
     base64url "^2.0.0"
     jwa "^1.1.4"
     safe-buffer "^5.0.1"
+
+jwt-simple@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/jwt-simple/-/jwt-simple-0.5.1.tgz#79ea01891b61de6b68e13e67c0b4b5bda937b294"
 
 kind-of@^3.0.2:
   version "3.2.2"
@@ -1433,13 +1454,20 @@ passport-cas@^0.1.1:
     underscore "1.6.0"
     xml2js "0.4.4"
 
+passport-jwt@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/passport-jwt/-/passport-jwt-3.0.0.tgz#7d9e4ff0fa0522108540ce1fcfa83bbd8faa29c9"
+  dependencies:
+    jsonwebtoken "^7.0.0"
+    passport-strategy "^1.0.0"
+
 passport-local@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/passport-local/-/passport-local-1.0.0.tgz#1fe63268c92e75606626437e3b906662c15ba6ee"
   dependencies:
     passport-strategy "1.x.x"
 
-passport-strategy@1.x.x:
+passport-strategy@1.x.x, passport-strategy@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/passport-strategy/-/passport-strategy-1.0.0.tgz#b5539aa8fc225a3d1ad179476ddf236b440f52e4"
 
@@ -1480,9 +1508,9 @@ pg-connection-string@0.1.3, pg-connection-string@^0.1.3:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/pg-connection-string/-/pg-connection-string-0.1.3.tgz#da1847b20940e42ee1492beaf65d49d91b245df7"
 
-pg-minify@^0.4.4:
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/pg-minify/-/pg-minify-0.4.5.tgz#d3e92fb690f9283b8a37866e4566fce9fed26150"
+pg-minify@~0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/pg-minify/-/pg-minify-0.5.3.tgz#aa09befa3cbe29fab6461bf819100e0471215011"
 
 pg-pool@1.*:
   version "1.8.0"
@@ -1502,10 +1530,9 @@ pg-sql2@^1.0.0-alpha1.0, pg-sql2@^1.0.0-beta.3:
     debug ">=2 <3"
 
 pg-types@1.*:
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/pg-types/-/pg-types-1.12.0.tgz#8ad3b7b897e3fd463e62de241ad5fc640b4a66f0"
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/pg-types/-/pg-types-1.12.1.tgz#d64087e3903b58ffaad279e7595c52208a14c3d2"
   dependencies:
-    ap "~0.2.0"
     postgres-array "~1.0.0"
     postgres-bytea "~1.0.0"
     postgres-date "~1.0.0"
@@ -1548,17 +1575,17 @@ pluralize@^5.0.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/pluralize/-/pluralize-5.1.0.tgz#586a3944a76c481f89774f755652779f61d692b2"
 
-postgraphile-core@^0.1.0-alpha.23:
-  version "0.1.0-alpha.23"
-  resolved "https://registry.yarnpkg.com/postgraphile-core/-/postgraphile-core-0.1.0-alpha.23.tgz#99221547197de546144437d023c5a2e16d15dd22"
+postgraphile-core@^0.1.0-alpha.26:
+  version "0.1.0-alpha.27"
+  resolved "https://registry.yarnpkg.com/postgraphile-core/-/postgraphile-core-0.1.0-alpha.27.tgz#39656c0dd7cd490248111f0e52f863e00e6f41b1"
   dependencies:
     babel-runtime ">=6 <7"
-    graphile-build "^0.1.0-alpha.18"
-    graphile-build-pg "^0.1.0-alpha.23"
+    graphile-build "^0.1.0-alpha.27"
+    graphile-build-pg "^0.1.0-alpha.27"
 
 postgraphql@next:
-  version "4.0.0-alpha2.11"
-  resolved "https://registry.yarnpkg.com/postgraphql/-/postgraphql-4.0.0-alpha2.11.tgz#379be5bfcb42b9c1326d1b882772837fd356e21c"
+  version "4.0.0-alpha2.14"
+  resolved "https://registry.yarnpkg.com/postgraphql/-/postgraphql-4.0.0-alpha2.14.tgz#eca66c6bf67262a3b28df29faa1971ccbc587c3f"
   dependencies:
     body-parser "^1.15.2"
     chalk "1.1.3"
@@ -1573,10 +1600,10 @@ postgraphql@next:
     parseurl "^1.3.1"
     pg "^6.1.0"
     pg-connection-string "^0.1.3"
-    pg-minify "^0.4.4"
+    pg-minify "~0.5.3"
     pg-sql2 "^1.0.0-alpha1.0"
     pluralize "^3.0.0"
-    postgraphile-core "^0.1.0-alpha.23"
+    postgraphile-core "^0.1.0-alpha.26"
     postgres-interval "^1.0.2"
     send "^0.14.1"
     tslib "^1.5.0"
@@ -1639,6 +1666,10 @@ qs@6.4.0, qs@~6.4.0:
 qs@6.5.0:
   version "6.5.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.0.tgz#8d04954d364def3efc55b5a0793e1e2c8b1e6e49"
+
+rambda@^0.8.7:
+  version "0.8.7"
+  resolved "https://registry.yarnpkg.com/rambda/-/rambda-0.8.7.tgz#9a93117ac580a75aedb2a81aa33e131c70194c83"
 
 randomatic@^1.1.3:
   version "1.1.7"
@@ -1710,10 +1741,6 @@ rechoir@^0.6.2:
   resolved "https://registry.yarnpkg.com/rechoir/-/rechoir-0.6.2.tgz#85204b54dba82d5742e28c96756ef43af50e3384"
   dependencies:
     resolve "^1.1.6"
-
-regenerator-runtime@^0.10.0:
-  version "0.10.5"
-  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.10.5.tgz#336c3efc1220adcedda2c9fab67b5a7955a33658"
 
 regenerator-runtime@^0.11.0:
   version "0.11.0"
@@ -1974,6 +2001,12 @@ strip-json-comments@~2.0.1:
 supports-color@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-2.0.0.tgz#535d045ce6b6363fa40117084629995e9df324c7"
+
+supports-color@^4.0.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-4.4.0.tgz#883f7ddabc165142b2a61427f3352ded195d1a3e"
+  dependencies:
+    has-flag "^2.0.0"
 
 tar-pack@^3.4.0:
   version "3.4.0"

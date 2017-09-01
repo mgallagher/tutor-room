@@ -12,14 +12,13 @@ export const SessionData = gql`
     timeOut
     studentByStudentId {
       aNumber
-      firstName
+      preferredName
       lastName
     }
-    classByCrn {
-      course: courseByCourseNumber {
-        number
-        title
-      }
+    courseByCrn {
+      crn
+      number
+      title
     }
   }
 `

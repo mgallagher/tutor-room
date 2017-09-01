@@ -6,6 +6,12 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+  cas-sso:
+    image: sergiofbsilva/cas-dev
+    command: "/cas-overlay/bin/run-jetty.sh"
+    ports:
+      - "8080:8080"
+      - "8443:8443"
 
 volumes:
   db_data: {}

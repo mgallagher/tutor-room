@@ -4,12 +4,6 @@ CREATE SCHEMA tutor_room;
 CREATE SCHEMA tutor_room_private;
 
 -- Any particularly sensitive data should live in the private schema
-CREATE TYPE tutor_room_private.jwt_token as (
-  usu_id   INTEGER,
-  a_number TEXT,
-  role     TEXT
-);
-
 CREATE TABLE tutor_room_private.term (
   code        TEXT PRIMARY KEY,
   description TEXT NOT NULL,
@@ -22,6 +16,12 @@ CREATE TABLE tutor_room_private.tutor (
   a_number TEXT NOT NULL UNIQUE
 );
 
+CREATE TYPE tutor_room.jwt_token as (
+  usu_id   INTEGER,
+  a_number TEXT,
+  role     TEXT
+);
+
 CREATE TABLE tutor_room.student (
   id             INTEGER PRIMARY KEY,
   a_number       TEXT NOT NULL UNIQUE,
@@ -32,19 +32,15 @@ CREATE TABLE tutor_room.student (
 );
 
 CREATE TABLE tutor_room.course (
-  number INTEGER PRIMARY KEY,
-  title  TEXT NOT NULL
-);
-
-CREATE TABLE tutor_room.class (
   crn           INTEGER PRIMARY KEY,
-  course_number INTEGER NOT NULL REFERENCES tutor_room.course (number),
-  term_code     TEXT NOT NULL  -- Might want to reference the term table
+  number        INTEGER NOT NULL,
+  title         TEXT NOT NULL,
+  term_code     TEXT NOT NULL
 );
 
-CREATE TABLE tutor_room.student_class (
+CREATE TABLE tutor_room.student_course (
   student_id INTEGER NOT NULL REFERENCES tutor_room.student (id),
-  crn        INTEGER NOT NULL REFERENCES tutor_room.class (crn),
+  crn        INTEGER NOT NULL REFERENCES tutor_room.course (crn),
   PRIMARY KEY (student_id, crn)
 );
 
@@ -64,7 +60,7 @@ CREATE TYPE tutor_room.session_tag AS ENUM (
 CREATE TABLE tutor_room.session (
   id           SERIAL PRIMARY KEY,
   student_id   INTEGER NOT NULL REFERENCES tutor_room.student (id),
-  crn          INTEGER NOT NULL REFERENCES tutor_room.class (crn),
+  crn          INTEGER NOT NULL REFERENCES tutor_room.course (crn),
   reason       tutor_room.session_reason,
   tutor_id     INTEGER REFERENCES tutor_room_private.tutor (id),
   time_in      TIMESTAMPTZ DEFAULT now(), -- Time the student queues up for help

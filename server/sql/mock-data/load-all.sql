@@ -1,6 +1,6 @@
 BEGIN;
 \ir students.sql
-\ir courses-classes.sql
-\ir student-classes.sql
+\ir courses.sql
+\ir student-courses.sql
 \ir student-queue.sql
 COMMIT;

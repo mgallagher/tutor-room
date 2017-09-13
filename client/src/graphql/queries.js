@@ -1,6 +1,6 @@
-import gql from 'graphql-tag';
+import gql from 'graphql-tag'
 
-import { SessionData } from './fragments';
+import { SessionData } from './fragments'
 
 export const AllSessions = gql`
   query allSessions {
@@ -12,13 +12,13 @@ export const AllSessions = gql`
     }
   }
   ${SessionData}
-`;
+`
 
 export const AverageWait = gql`
-  query {
+  query averageWait {
     latestAverageWait {
       minutes
       hours
     }
   }
-`;
+`

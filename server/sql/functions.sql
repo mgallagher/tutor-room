@@ -8,15 +8,15 @@ WHERE s.a_number = current_setting('jwt.claims.a_number') :: TEXT
 $$ LANGUAGE SQL STABLE;
 
 -- Mutation functions
-CREATE FUNCTION tutor_room_private.start_session(a_number TEXT, crn INTEGER, reason tutor_room.session_reason, description TEXT)
+CREATE FUNCTION tutor_room_private.start_session(a_number TEXT, course_id INTEGER, reason tutor_room.session_reason, description TEXT)
   RETURNS tutor_room.session AS $$
 INSERT INTO
-  tutor_room.session (student_id, crn, reason, description, time_in)
+  tutor_room.session (student_id, course_id, reason, description, time_in)
   SELECT id AS student_id, $2, $3, $4, current_timestamp FROM tutor_room.student as a WHERE a.a_number = start_session.a_number
 RETURNING *
 $$ LANGUAGE SQL VOLATILE;
 
-CREATE FUNCTION tutor_room.start_session(crn INTEGER, reason tutor_room.session_reason, description TEXT)
+CREATE FUNCTION tutor_room.start_session(course_id INTEGER, reason tutor_room.session_reason, description TEXT)
   RETURNS tutor_room.session AS $$
 SELECT tutor_room_private.start_session(current_setting('jwt.claims.a_number'), $1, $2, $3)
 $$ LANGUAGE SQL VOLATILE;

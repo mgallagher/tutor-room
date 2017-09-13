@@ -1,5 +1,7 @@
-const axios = require('axios')
-const config = require('./config')
+// @flow
+import axios from 'axios'
+import moment from 'moment'
+import config from './config'
 
 var usuApi = axios.create({
   baseURL: 'https://api.usu.edu/v1/',
@@ -9,31 +11,31 @@ var usuApi = axios.create({
   }
 })
 
-const lookupByAggieNumber = aNumber => {
+export const lookupByAggieNumber = (aNumber: string | number): Promise<?USUPerson> => {
   return usuApi
     .get(`/people/?username=${aNumber}`)
-    .then(res => {
-      return res.data.length === 1 ? res.data[0] : {}
+    .then((res: { data: USUPerson[] }) => {
+      return res.data.length === 1 ? res.data[0] : null
     })
     .catch(reason => console.error('Student lookup failed with error: ', reason))
 }
 
-const getStudentSchedule = (id, termId) => {
+export const getStudentSchedule = (studentId: number | string, termCode: number | string) => {
   return usuApi
-    .get(`/people/${id}/student-schedule/?term=${201740}`)
-    .then(res => res.data)
-    .catch(reason => console.error('Student schedule retrieval failed with error: ', reason))
+    .get(`/people/${studentId}/student-schedule/?term=${termCode}`)
+    .then((res: { data: USUStudentCourseDetail[] }) => res.data)
+  // .catch(reason => console.error('Student schedule retrieval failed with error: ', reason))
 }
 
-const getCurrentTerm = () => {
+export const getTerm = (date: string = moment().format('YYYYMMDD')): Promise<?TermInfo> => {
   return usuApi
     .get(`/terms?date=${date}`)
-    .then(res => res.data)
+    .then(res => {
+      if (res.data.length === 1) {
+        return res.data[0]
+      } else {
+        return null
+      }
+    })
     .catch(reason => console.error('Get current term failed with error: ', reason))
-}
-
-module.exports = {
-  lookupByAggieNumber,
-  getStudentSchedule,
-  getCurrentTerm
 }

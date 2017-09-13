@@ -1,0 +1,16 @@
+[ignore]
+.*/node_modules/graphile-build-pg/.*
+.*/node_modules/postgraphile-core/.*
+.*/node_modules/graphql/.*
+.*/node_modules/graphql-parse-resolve-info/.*
+.*/node_modules/graphile-build/.*
+.*/node_modules/graphql-iso-date/.*
+
+[include]
+
+[libs]
+flow-typed
+
+[lints]
+
+[options]

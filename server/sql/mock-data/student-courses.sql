@@ -1,5 +1,5 @@
 INSERT INTO
-  tutor_room.student_course (student_id, crn)
+  tutor_room.student_course (student_id, course_id)
 VALUES
   (1, 10925),
   (2, 10925),

@@ -22,7 +22,7 @@ SELECT tutor_room_private.start_session(current_setting('jwt.claims.a_number'), 
 $$ LANGUAGE SQL VOLATILE;
 
 
-CREATE FUNCTION tutor_room_private.claim_session(session_id INTEGER, tutor_id INTEGER)
+CREATE OR REPLACE FUNCTION tutor_room_private.claim_session(session_id INTEGER, tutor_id INTEGER)
   RETURNS tutor_room.session AS $$
 UPDATE
   tutor_room.session
@@ -33,10 +33,10 @@ WHERE
 RETURNING *
 $$ LANGUAGE SQL VOLATILE;
 
--- CREATE FUNCTION tutor_room.claim_session(session_id INTEGER)
---   RETURNS tutor_room.session AS $$
--- SELECT tutor_room_private.claim_session($1, current_setting('jwt.claims.usu_id'))
--- $$ LANGUAGE SQL VOLATILE;
+CREATE OR REPLACE FUNCTION tutor_room.claim_session(session_id INTEGER)
+  RETURNS tutor_room.session AS $$
+SELECT tutor_room_private.claim_session($1, current_setting('jwt.claims.usu_id')::INTEGER)
+$$ LANGUAGE SQL VOLATILE;
 
 
 CREATE FUNCTION tutor_room_private.finish_session(session_id INTEGER, tag tutor_room.session_tag default NULL, notes TEXT default NULL, requeued BOOLEAN default false)
@@ -60,6 +60,14 @@ CREATE FUNCTION tutor_room_private.delete_session(session_id INTEGER)
   RETURNS tutor_room.session AS $$
 DELETE FROM tutor_room.session
 WHERE id = $1
+RETURNING *
+$$ LANGUAGE SQL VOLATILE;
+
+
+CREATE FUNCTION tutor_room.copy_session(session_id INTEGER)
+  RETURNS tutor_room.session AS $$
+INSERT INTO tutor_room.session (student_id, course_id, reason, time_in, description)
+SELECT student_id, course_id, reason, time_in, description FROM tutor_room.session WHERE id = $1
 RETURNING *
 $$ LANGUAGE SQL VOLATILE;
 

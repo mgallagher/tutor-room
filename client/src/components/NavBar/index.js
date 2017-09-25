@@ -16,15 +16,25 @@ const Wrapper = styled.div`
 const Title = styled.span`
   font-weight: lighter;
   font-size: 15pt;
-`;
+  margin: 5px;
+`
+
+const SubTitle = styled.span`
+  font-weight: lighter;
+  font-size: 9pt;
+`
 
 function NavBar() {
   return (
     <Wrapper>
       <AggieIcon />
-      <Title>USU Tutor Lab</Title>
+      <div>
+        <Title>USU CS Tutor Lab</Title>
+        <SubTitle>(Beta)</SubTitle>
+      </div>
       <AccountIcon />
-    </Wrapper>);
+    </Wrapper>
+  )
 }
 
 export default NavBar

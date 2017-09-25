@@ -1133,6 +1133,12 @@ debug@2.6.8, "debug@>=2 <3", debug@^2.1.3, debug@^2.2.0, debug@^2.3.3, debug@^2.
   dependencies:
     ms "2.0.0"
 
+debug@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-3.0.1.tgz#0564c612b521dc92d9f2988f0549e34f9c98db64"
+  dependencies:
+    ms "2.0.0"
+
 debug@~2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.2.0.tgz#f87057e995b1a1f6ae6a4960664137bc56f039da"
@@ -1245,18 +1251,18 @@ eslint-scope@^3.7.1:
     estraverse "^4.1.1"
 
 eslint@^4.6.1:
-  version "4.6.1"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-4.6.1.tgz#ddc7fc7fd70bf93205b0b3449bb16a1e9e7d4950"
+  version "4.7.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-4.7.0.tgz#d35fc07c472520be3de85b3da11e99c576afd515"
   dependencies:
     ajv "^5.2.0"
     babel-code-frame "^6.22.0"
     chalk "^2.1.0"
     concat-stream "^1.6.0"
     cross-spawn "^5.1.0"
-    debug "^2.6.8"
+    debug "^3.0.1"
     doctrine "^2.0.0"
     eslint-scope "^3.7.1"
-    espree "^3.5.0"
+    espree "^3.5.1"
     esquery "^1.0.0"
     estraverse "^4.2.0"
     esutils "^2.0.2"
@@ -1277,7 +1283,7 @@ eslint@^4.6.1:
     natural-compare "^1.4.0"
     optionator "^0.8.2"
     path-is-inside "^1.0.2"
-    pluralize "^4.0.0"
+    pluralize "^7.0.0"
     progress "^2.0.0"
     require-uncached "^1.0.3"
     semver "^5.3.0"
@@ -1286,9 +1292,9 @@ eslint@^4.6.1:
     table "^4.0.1"
     text-table "~0.2.0"
 
-espree@^3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/espree/-/espree-3.5.0.tgz#98358625bdd055861ea27e2867ea729faf463d8d"
+espree@^3.5.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/espree/-/espree-3.5.1.tgz#0c988b8ab46db53100a1954ae4ba995ddd27d87e"
   dependencies:
     acorn "^5.1.1"
     acorn-jsx "^3.0.0"
@@ -1479,8 +1485,8 @@ flat-cache@^1.2.1:
     write "^0.2.1"
 
 flow-bin@^0.54.0:
-  version "0.54.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.54.0.tgz#f2fb0478e9e99702b623c9ed84079a39903bba77"
+  version "0.54.1"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.54.1.tgz#7101bcccf006dc0652714a8aef0c72078a760510"
 
 follow-redirects@^1.2.3:
   version "1.2.4"
@@ -1652,14 +1658,14 @@ graceful-fs@^4.1.2, graceful-fs@^4.1.4:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/graceful-readlink/-/graceful-readlink-1.0.1.tgz#4cafad76bc62f02fa039b2f94e9a3dd3a391a725"
 
-graphile-build-pg@^0.1.0-alpha.27:
-  version "0.1.0-alpha.27"
-  resolved "https://registry.yarnpkg.com/graphile-build-pg/-/graphile-build-pg-0.1.0-alpha.27.tgz#4cdbca69d1bd2f9c5fb52acc252d49ad3e3b5874"
+graphile-build-pg@^0.1.0-alpha.32:
+  version "0.1.0-alpha.32"
+  resolved "https://registry.yarnpkg.com/graphile-build-pg/-/graphile-build-pg-0.1.0-alpha.32.tgz#51daf9da1edd0f26d9068a6223d0f19e4ee09fb2"
   dependencies:
     babel-runtime ">=6 <7"
     chalk "^2.1.0"
     debug ">=2 <3"
-    graphile-build "^0.1.0-alpha.27"
+    graphile-build "^0.1.0-alpha.32"
     graphql-iso-date "^3.2.0"
     graphql-type-json "^0.1.4"
     jsonwebtoken "^7.4.1"
@@ -1669,9 +1675,9 @@ graphile-build-pg@^0.1.0-alpha.27:
     pg-sql2 "^1.0.0-beta.3"
     pluralize "^5.0.0"
 
-graphile-build@^0.1.0-alpha.27:
-  version "0.1.0-alpha.27"
-  resolved "https://registry.yarnpkg.com/graphile-build/-/graphile-build-0.1.0-alpha.27.tgz#3f5eab9b67d65e5489f55084ff40d5687cb03dca"
+graphile-build@^0.1.0-alpha.32:
+  version "0.1.0-alpha.32"
+  resolved "https://registry.yarnpkg.com/graphile-build/-/graphile-build-0.1.0-alpha.32.tgz#16d7ebe06101d39d96d145509d2d9117bbeadc9e"
   dependencies:
     babel-runtime ">=6 <7"
     debug ">=2 <3"
@@ -2514,25 +2520,25 @@ pluralize@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/pluralize/-/pluralize-3.1.0.tgz#84213d0a12356069daa84060c559242633161368"
 
-pluralize@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/pluralize/-/pluralize-4.0.0.tgz#59b708c1c0190a2f692f1c7618c446b052fd1762"
-
 pluralize@^5.0.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/pluralize/-/pluralize-5.1.0.tgz#586a3944a76c481f89774f755652779f61d692b2"
 
-postgraphile-core@^0.1.0-alpha.27:
-  version "0.1.0-alpha.27"
-  resolved "https://registry.yarnpkg.com/postgraphile-core/-/postgraphile-core-0.1.0-alpha.27.tgz#39656c0dd7cd490248111f0e52f863e00e6f41b1"
+pluralize@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/pluralize/-/pluralize-7.0.0.tgz#298b89df8b93b0221dbf421ad2b1b1ea23fc6777"
+
+postgraphile-core@0.1.0-alpha.32:
+  version "0.1.0-alpha.32"
+  resolved "https://registry.yarnpkg.com/postgraphile-core/-/postgraphile-core-0.1.0-alpha.32.tgz#bc5848f0404639ed6d6ed44f9ef78b6c7cef98bf"
   dependencies:
     babel-runtime ">=6 <7"
-    graphile-build "^0.1.0-alpha.27"
-    graphile-build-pg "^0.1.0-alpha.27"
+    graphile-build "^0.1.0-alpha.32"
+    graphile-build-pg "^0.1.0-alpha.32"
 
-postgraphql@next:
-  version "4.0.0-alpha2.15"
-  resolved "https://registry.yarnpkg.com/postgraphql/-/postgraphql-4.0.0-alpha2.15.tgz#c751d0e84786c85b503f1bfa5110020e9ff5654f"
+postgraphql@^4.0.0-alpha2.20:
+  version "4.0.0-alpha2.20"
+  resolved "https://registry.yarnpkg.com/postgraphql/-/postgraphql-4.0.0-alpha2.20.tgz#b01e38fdacc0984b0239179b055e7a8472791203"
   dependencies:
     body-parser "^1.15.2"
     chalk "1.1.3"
@@ -2550,7 +2556,7 @@ postgraphql@next:
     pg-minify "~0.5.3"
     pg-sql2 "^1.0.0-alpha1.0"
     pluralize "^3.0.0"
-    postgraphile-core "^0.1.0-alpha.27"
+    postgraphile-core "0.1.0-alpha.32"
     postgres-interval "^1.0.2"
     send "^0.14.1"
     tslib "^1.5.0"

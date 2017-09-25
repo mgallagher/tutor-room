@@ -14,7 +14,7 @@
     "passport": "^0.4.0",
     "passport-cas": "^0.1.1",
     "passport-jwt": "^3.0.0",
-    "postgraphql": "next",
+    "postgraphql": "^4.0.0-alpha2.20",
     "ramda": "^0.24.1"
   },
   "devDependencies": {
@@ -25,6 +25,7 @@
     "babel-preset-es2016": "^6.24.1",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-stage-0": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
     "babel-register": "^6.26.0",
     "babel-watch": "^2.0.7",
     "eslint": "^4.6.1",
@@ -36,6 +37,10 @@
     "start": "babel-watch server.js"
   },
   "babel": {
-    "presets": ["es2015", "flow"]
+    "presets": [
+      "es2015",
+      "flow",
+      "stage-2"
+    ]
   }
 }

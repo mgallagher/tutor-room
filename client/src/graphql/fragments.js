@@ -4,7 +4,7 @@ export const SessionData = gql`
   fragment SessionData on Session {
     id
     nodeId
-    crn
+    courseId
     reason
     description
     timeIn
@@ -15,8 +15,8 @@ export const SessionData = gql`
       preferredName
       lastName
     }
-    courseByCrn {
-      crn
+    course: courseByCourseId {
+      id
       number
       title
     }

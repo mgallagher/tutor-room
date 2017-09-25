@@ -5,13 +5,13 @@ import moment from 'moment'
 import { sessionReasons } from '../../constants'
 
 const PriorSessionRow = ({ session, handleClick }) => {
-  const { studentByStudentId, courseByCrn, reason, description, timeIn } = session
+  const { studentByStudentId, course, reason, description, timeIn } = session
   return (
     <Table.Row onClick={handleClick}>
-      <Table.Cell>{studentByStudentId.fullName}</Table.Cell>
+      <Table.Cell>{studentByStudentId.preferredName}</Table.Cell>
       <Table.Cell>
         <Header as="h4">
-          <Header.Content>{courseByCrn.number}</Header.Content>
+          <Header.Content>{course.number}</Header.Content>
         </Header>
       </Table.Cell>
       <Table.Cell>{sessionReasons.get(reason)}</Table.Cell>

@@ -6,11 +6,11 @@ import passportCas from 'passport-cas'
 import jwt from 'jsonwebtoken'
 import {
   getStudent,
+  getTutor,
   insertStudent,
-  courseExists,
-  insertCourse,
-  getCourse,
-  safeInsertStudentCourse
+  safeInsertCourse,
+  safeInsertStudentCourse,
+  studentHasCourses
 } from './db'
 import { lookupByAggieNumber, getStudentSchedule, getTerm } from './usuApi'
 import { courseDetailToCourse } from './helpers'
@@ -44,14 +44,6 @@ const getOrSyncStudent = async (aNumber: string | number) => {
   }
 }
 
-const insertCourseIfNotExists = (course: Course) => {
-  courseExists(course).then(exists => {
-    if (!exists) {
-      return insertCourse(course)
-    }
-  })
-}
-
 const syncStudentSchedule = async (studentId: string | number) => {
   console.log(`Retrieving schedule for student ${studentId}`)
   // TODO: Might want to store term details rather than retrieving every time
@@ -62,13 +54,12 @@ const syncStudentSchedule = async (studentId: string | number) => {
     const studentCourses = studentSchedule
       .filter(course => course.courseSubject === 'CS')
       .map(courseDetailToCourse)
-    await studentCourses.map(insertCourseIfNotExists)
-    // INSERT STUDENT COURSES NOW!!
-    await studentCourses.map(course => getCourse(course))
+    await Promise.all(studentCourses.map(safeInsertCourse))
+    await Promise.all(studentCourses.map(course => safeInsertStudentCourse({ studentId, ...course })))
   }
 }
 
-syncStudentSchedule('A01186010')
+// syncStudentSchedule('A01186010')
 // syncStudentSchedule(2415222)
 
 passport.use(
@@ -81,18 +72,17 @@ passport.use(
       serverBaseURL: 'http://localhost:5000/login/cas'
     },
     async (profile, done) => {
-      const student = await getOrSyncStudent(profile.user)
-      return done(null, student)
+      // profile.user is the aggie number
+      return done(null, profile.user)
     }
   )
 )
 
-const getJWTTokenForUser = (user, role) =>
+const getJWTTokenForUser = (user: StudentRecord | TutorRecord, role: string) =>
   jwt.sign(
     {
       aud: 'postgraphql',
       // role: role,
-      // LEFT OFF HERE - student checkin query is failing
       usu_id: (user && user.id) || undefined,
       a_number: (user && user.a_number) || undefined,
       date_created: new Date().toISOString()
@@ -101,19 +91,26 @@ const getJWTTokenForUser = (user, role) =>
   )
 
 app.use('/login/cas', (req: express$Request, res, next) => {
-  passport.authenticate('cas', (err, user, info) => {
-    console.log('/login/cas', err, user, info)
+  passport.authenticate('cas', async (err, aggieNumber: string, info) => {
     if (err) {
-      // Add redirect
       return next(err)
     }
-    if (!user) {
-      console.log('not user?')
+    if (!aggieNumber) {
       return res.redirect('/')
     }
-    // TODO: Don't forget about the tutor role
-    const token = getJWTTokenForUser(user, 'student')
-    return res.redirect(`http://localhost:3000/checkin/${token}`)
+    // Tutor role
+    const tutor = await getTutor(aggieNumber)
+    if (tutor != null) {
+      const token = getJWTTokenForUser(tutor, 'tutor')
+      return res.redirect(`http://localhost:3000/queue/${token}`)
+    }
+    // Student role
+    const student = await getOrSyncStudent(aggieNumber)
+    if (student != null) {
+      const token = getJWTTokenForUser(student, 'student')
+      return res.redirect(`http://localhost:3000/checkin/${token}`)
+    }
+    return res.send('Error occured during student/tutor retrieval process')
   })(req, res, next)
 })
 

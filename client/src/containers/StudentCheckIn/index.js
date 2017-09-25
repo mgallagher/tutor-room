@@ -5,10 +5,9 @@ import { compose } from 'recompose'
 import { Redirect } from 'react-router-dom'
 import { Grid, Header, Label, Icon } from 'semantic-ui-react'
 
-import EnterAggieNumber from './EnterAggieNumber'
 import SelectClass from './SelectClass'
 import EnterDescription from './EnterDescription'
-import { CreateSession } from '../../graphql/mutations'
+import { StartSession } from '../../graphql/mutations'
 import { AverageWait } from '../../graphql/queries'
 
 const SqueezedColumn = styled(Grid.Column)`max-width: 450px;`
@@ -18,7 +17,7 @@ const FlexCenter = styled.div`
   justify-content: center;
 `
 
-const enhance = compose(graphql(CreateSession))
+const enhance = compose(graphql(StartSession))
 
 const AverageWaitLabel = ({ data }) => {
   const { latestAverageWait, loading } = data
@@ -35,8 +34,7 @@ export const AverageWaitWithData = graphql(AverageWait)(AverageWaitLabel)
 
 class StudentCheckIn extends React.Component {
   initialState = {
-    aNumber: '',
-    crn: 0,
+    courseId: null,
     description: '',
     reason: '',
     submitted: false
@@ -46,18 +44,17 @@ class StudentCheckIn extends React.Component {
   componentWillMount() {
     const token = this.props.match.params.token
     if (token !== undefined) {
-      console.log('setting token')
       localStorage.setItem('token', token)
     }
   }
 
   handleChange = (e, { name, value }) => this.setState({ [name]: value })
-  handleClassSelect = crn => event => this.setState({ crn: crn })
+  handleClassSelect = courseId => event => this.setState({ courseId: courseId })
   handleSubmit = async event => {
     event.preventDefault()
-    const { aNumber, crn, description, reason } = this.state
+    const { courseId, description, reason } = this.state
     await this.props.mutate({
-      variables: { aNumber, crn, description, reason }
+      variables: { courseId, description, reason }
     })
     this.setState({ submitted: true })
     setTimeout(() => this.setState(this.initialState), 3000)
@@ -65,7 +62,7 @@ class StudentCheckIn extends React.Component {
 
   render() {
     const token = this.props.match.params.token
-    if (token !== undefined) {
+    if (token != null) {
       return <Redirect to="/checkin" />
     }
     return (
@@ -75,11 +72,9 @@ class StudentCheckIn extends React.Component {
             <FlexCenter>
               <AverageWaitWithData />
             </FlexCenter>
-            {/* <EnterAggieNumber value={this.state.aNumber} onChange={this.handleChange} /> */}
             <SelectClass
-              aNumber={this.state.aNumber}
               handleClassClick={this.handleClassSelect}
-              selectedClass={this.state.crn}
+              selectedClass={this.state.courseId}
             />
             <EnterDescription
               onChange={this.handleChange}

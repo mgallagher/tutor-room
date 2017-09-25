@@ -5,26 +5,13 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { Segment, List, Header, Icon } from 'semantic-ui-react'
 
-// const STUDENT_CLASSES_QUERY = gql`
-//   query ClassesForStudent($aNumber: String!) {
-//     allStudentCourses(condition:{aNumber:$aNumber}) {
-//       nodes {
-//         studentId
-//         name
-//         instructor
-//         crn
-//       }
-//     }
-//   }
-// `;
-
 const STUDENT_CLASSES_QUERY = gql`
   query {
     currentStudent {
       courses: studentCoursesByStudentId {
         nodes {
-          courseByCrn {
-            crn
+          course: courseByCourseId {
+            id
             number
             title
           }
@@ -36,12 +23,12 @@ const STUDENT_CLASSES_QUERY = gql`
 
 const LoadingSegment = styled(Segment)`min-height: 100px;`
 
-const ClassRow = ({ courseByCrn, onClick, active }) => {
+const ClassRow = ({ course, onClick, active }) => {
   return (
-    <List.Item active={active} onClick={onClick(courseByCrn.crn)}>
+    <List.Item active={active} onClick={onClick(course.id)}>
       <List.Content floated="left">
-        <List.Header>{courseByCrn.title}</List.Header>
-        {courseByCrn.number}
+        <List.Header>{course.title}</List.Header>
+        {course.number}
       </List.Content>
       <List.Content floated="right">
         <Icon fitted color={active ? 'green' : 'grey'} name="checkmark" size="large" />
@@ -52,12 +39,10 @@ const ClassRow = ({ courseByCrn, onClick, active }) => {
 
 const SelectClass = ({ data, handleClassClick, selectedClass }) => {
   const { currentStudent, loading } = data
-  console.log(currentStudent)
   if (loading) {
     return <LoadingSegment loading />
   }
-  console.log('hellooooo')
-  if (!currentStudent.classes.nodes.length) {
+  if (!currentStudent.courses.nodes.length) {
     return (
       <Segment>
         <h3>No Classes Found</h3>
@@ -68,12 +53,12 @@ const SelectClass = ({ data, handleClassClick, selectedClass }) => {
     <Segment>
       <Header as="h3">Select your class</Header>
       <List selection verticalAlign="middle">
-        {currentStudent.classes.nodes.map(course => (
+        {currentStudent.courses.nodes.map(studentClass => (
           <ClassRow
-            key={course.crn}
-            course={course}
+            key={studentClass.course.id}
+            course={studentClass.course}
             onClick={handleClassClick}
-            active={selectedClass === course.crn}
+            active={selectedClass === studentClass.course.id}
           />
         ))}
       </List>

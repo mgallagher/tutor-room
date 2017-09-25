@@ -12,8 +12,12 @@ CREATE TABLE tutor_room_private.term (
 );
 
 CREATE TABLE tutor_room_private.tutor (
-  id       INTEGER PRIMARY KEY,
-  a_number TEXT NOT NULL UNIQUE
+  id             INTEGER PRIMARY KEY,
+  a_number       TEXT NOT NULL UNIQUE,
+  first_name     TEXT,
+  last_name      TEXT,
+  preferred_name TEXT,
+  created        TIMESTAMPTZ DEFAULT now()
 );
 
 CREATE TYPE tutor_room.jwt_token as (

@@ -16,6 +16,9 @@ declare type StudentRecord = {
   preferred_name: string
 }
 
+declare type Tutor = Student
+declare type TutorRecord = StudentRecord
+
 declare type Course = {
   crn: number | string,
   number: number | string,

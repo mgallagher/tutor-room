@@ -6,7 +6,7 @@ const config = require('./config')
 
 const psql = knex({
   client: 'pg',
-  debug: config.debug,
+  debug: false,
   connection: {
     host: config.database.host,
     user: config.database.user,

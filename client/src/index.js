@@ -6,9 +6,10 @@ import { ThemeProvider as AppTheme } from 'styled-components'
 
 import Routes from './routes'
 import colors from './styles'
+import config from './config'
 
 const networkInterface = createNetworkInterface({
-  uri: 'http://localhost:5000/graphql'
+  uri: config.graphql_url
 })
 
 networkInterface.use([

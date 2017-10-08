@@ -15,18 +15,22 @@ const dbConfig = {
 
 const config = {
   development: {
-    graphqlUri: 'http://localhost:8000/graphql',
     jwtSecret: process.env.JWT_SECRET,
     usuApi: usuConfig,
     debug: true,
-    database: dbConfig
+    database: dbConfig,
+    serverURL: 'http://localhost:5000',
+    ssoBaseURL: 'http://localhost:8080/cas',
+    frontendURL: 'http://localhost:3000'
   },
   production: {
-    graphqlUri: 'https://komaru.eng.usu.edu/graphql',
     jwtSecret: process.env.JWT_SECRET,
     usuApi: usuConfig,
     debug: false,
-    database: dbConfig
+    database: dbConfig,
+    serverURL: 'https://komaru.eng.usu.edu',
+    ssoBaseURL: 'https://login.usu.edu/cas',
+    frontendURL: 'https://komaru.eng.usu.edu'
   }
 }
 

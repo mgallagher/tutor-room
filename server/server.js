@@ -44,32 +44,30 @@ const getOrSyncStudent = async (aNumber: string | number) => {
   }
 }
 
+
 const syncStudentSchedule = async (studentId: string | number) => {
   console.log(`Retrieving schedule for student ${studentId}`)
   // TODO: Might want to store term details rather than retrieving every time
   const termInfo = await getTerm()
+  // REFACTOR: These null checks are getting a bit silly...
   if (termInfo != null) {
     const studentSchedule = await getStudentSchedule(studentId, termInfo.termCode)
-    // TODO: Add option for other subjects
-    const studentCourses = studentSchedule
-      .filter(course => course.courseSubject === 'CS')
-      .map(courseDetailToCourse)
-    await Promise.all(studentCourses.map(safeInsertCourse))
-    await Promise.all(studentCourses.map(course => safeInsertStudentCourse({ studentId, ...course })))
+    if (studentSchedule != null) {
+      const studentCourses = studentSchedule
+        .filter(course => course.courseSubject === 'CS')
+        .map(courseDetailToCourse)
+      await Promise.all(studentCourses.map(safeInsertCourse))
+      await Promise.all(studentCourses.map(course => safeInsertStudentCourse({ studentId, ...course })))
+    }
   }
 }
-
-// syncStudentSchedule('A01186010')
-// syncStudentSchedule(2415222)
 
 passport.use(
   new passportCas.Strategy(
     {
       version: 'CAS3.0',
-      // ssoBaseURL: 'https://login.usu.edu/cas',
-      // serverBaseURL: 'https://komaru.eng.usu.edu/login/cas',
-      ssoBaseURL: 'http://localhost:8080/cas',
-      serverBaseURL: 'http://localhost:5000/login/cas'
+      ssoBaseURL: config.ssoBaseURL,
+      serverBaseURL: `${config.serverURL}/login/cas`
     },
     async (profile, done) => {
       // profile.user is the aggie number
@@ -102,13 +100,14 @@ app.use('/login/cas', (req: express$Request, res, next) => {
     const tutor = await getTutor(aggieNumber)
     if (tutor != null) {
       const token = getJWTTokenForUser(tutor, 'tutor')
-      return res.redirect(`http://localhost:3000/queue/${token}`)
+      return res.redirect(`${config.frontendURL}/queue/${token}`)
     }
     // Student role
     const student = await getOrSyncStudent(aggieNumber)
     if (student != null) {
+      const syncSchedule = await syncStudentSchedule(student.id)
       const token = getJWTTokenForUser(student, 'student')
-      return res.redirect(`http://localhost:3000/checkin/${token}`)
+      return res.redirect(`${config.frontendURL}/checkin/${token}`)
     }
     return res.send('Error occured during student/tutor retrieval process')
   })(req, res, next)
@@ -122,7 +121,7 @@ app.get('/queue/', (req: express$Request, res) => {
 app.use(passport.initialize())
 
 app.use(
-  postgraphql('postgres://postgres:@localhost:5432/postgres', 'tutor_room', {
+  postgraphql(`postgres://postgres:${config.database.password}@localhost:5432/postgres`, 'tutor_room', {
     graphiql: config.debug,
     disableDefaultMutations: true,
     enableCors: true,

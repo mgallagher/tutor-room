@@ -24,7 +24,7 @@ export const getStudentSchedule = (studentId: number | string, termCode: number 
   return usuApi
     .get(`/people/${studentId}/student-schedule/?term=${termCode}`)
     .then((res: { data: USUStudentCourseDetail[] }) => res.data)
-  // .catch(reason => console.error('Student schedule retrieval failed with error: ', reason))
+    .catch(reason => console.error('Student schedule retrieval failed with error: ', reason))
 }
 
 export const getTerm = (date: string = moment().format('YYYYMMDD')): Promise<?TermInfo> => {

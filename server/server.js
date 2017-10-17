@@ -18,10 +18,6 @@ import config from './config'
 
 var app = express()
 
-app.get('/', (req: express$Request, res) => {
-  res.send('Hello World!')
-})
-
 const getOrSyncStudent = async (aNumber: string | number) => {
   const student = await getStudent(aNumber)
   if (student != null) {
@@ -44,7 +40,6 @@ const getOrSyncStudent = async (aNumber: string | number) => {
   }
 }
 
-
 const syncStudentSchedule = async (studentId: string | number) => {
   console.log(`Retrieving schedule for student ${studentId}`)
   // TODO: Might want to store term details rather than retrieving every time
@@ -61,6 +56,8 @@ const syncStudentSchedule = async (studentId: string | number) => {
     }
   }
 }
+
+app.use(passport.initialize())
 
 passport.use(
   new passportCas.Strategy(
@@ -94,7 +91,7 @@ app.use('/login/cas', (req: express$Request, res, next) => {
       return next(err)
     }
     if (!aggieNumber) {
-      return res.redirect('/')
+      return res.redirect(config.casLoginURL)
     }
     // Tutor role
     const tutor = await getTutor(aggieNumber)
@@ -112,13 +109,6 @@ app.use('/login/cas', (req: express$Request, res, next) => {
     return res.send('Error occured during student/tutor retrieval process')
   })(req, res, next)
 })
-
-app.get('/queue/', (req: express$Request, res) => {
-  const token = req.query.token
-  return res.send(`received token ${token}`)
-})
-
-app.use(passport.initialize())
 
 app.use(
   postgraphql(`postgres://postgres:${config.database.password}@localhost:5432/postgres`, 'tutor_room', {

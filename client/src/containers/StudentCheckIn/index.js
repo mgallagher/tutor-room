@@ -1,8 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 import { graphql } from 'react-apollo'
-import { compose } from 'recompose'
+import { compose } from 'ramda'
 import { Redirect } from 'react-router-dom'
+import moment from 'moment'
 import { Grid, Header, Label, Icon } from 'semantic-ui-react'
 
 import SelectClass from './SelectClass'
@@ -17,15 +18,22 @@ const FlexCenter = styled.div`
   justify-content: center;
 `
 
-const enhance = compose(graphql(StartSession))
+const enhance = compose(graphql(StartSession), graphql(AverageWait))
 
+// TODO: Make this a separate component
 const AverageWaitLabel = ({ data }) => {
   const { latestAverageWait, loading } = data
+  const duration = moment.duration({
+    hours: latestAverageWait ? latestAverageWait.hours : 0,
+    minutes: latestAverageWait ? latestAverageWait.minutes : 0
+  })
   return (
     <Label size="big">
       <Icon name="wait" />
       Average wait:
-      <Label.Detail>{loading ? '...' : `${latestAverageWait.minutes} minutes`}</Label.Detail>
+      <Label.Detail>
+        {loading ? '...' : duration.asMinutes() ? `${duration.asMinutes()} min.` : 'No wait!'}
+      </Label.Detail>
     </Label>
   )
 }
@@ -37,7 +45,8 @@ class StudentCheckIn extends React.Component {
     courseId: null,
     description: '',
     reason: '',
-    submitted: false
+    submitted: false,
+    redirect: false
   }
   state = this.initialState
 
@@ -57,25 +66,27 @@ class StudentCheckIn extends React.Component {
       variables: { courseId, description, reason }
     })
     this.setState({ submitted: true })
-    setTimeout(() => this.setState(this.initialState), 3000)
+    setTimeout(() => {
+      this.setState({ redirect: true })
+    }, 3000)
   }
 
   render() {
     const token = this.props.match.params.token
     if (token != null) {
       return <Redirect to="/checkin" />
+    } else if (this.state.redirect) {
+      return <Redirect to="/logout" />
     }
     return (
       <Grid centered columns={1} textAlign="left">
         {!this.state.submitted && (
           <SqueezedColumn>
             <FlexCenter>
-              <AverageWaitWithData />
+              {!this.props.data.loading &&
+                this.props.data.latestAverageWait && <AverageWaitWithData data={this.props.data} />}
             </FlexCenter>
-            <SelectClass
-              handleClassClick={this.handleClassSelect}
-              selectedClass={this.state.courseId}
-            />
+            <SelectClass handleClassClick={this.handleClassSelect} selectedClass={this.state.courseId} />
             <EnterDescription
               onChange={this.handleChange}
               onSubmit={this.handleSubmit}
@@ -89,5 +100,4 @@ class StudentCheckIn extends React.Component {
   }
 }
 
-// export default enhance(StudentCheckIn);
 export default enhance(StudentCheckIn)

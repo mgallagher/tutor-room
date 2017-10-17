@@ -7,6 +7,7 @@ export const SessionData = gql`
     courseId
     reason
     description
+    tutorId
     timeIn
     timeClaimed
     timeOut

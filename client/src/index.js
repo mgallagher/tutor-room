@@ -9,7 +9,7 @@ import colors from './styles'
 import config from './config'
 
 const networkInterface = createNetworkInterface({
-  uri: config.graphql_url
+  uri: config.graphqlURL
 })
 
 networkInterface.use([
@@ -19,7 +19,9 @@ networkInterface.use([
         req.options.headers = {}
       }
       const token = localStorage.getItem('token')
-      req.options.headers.authorization = token ? `Bearer ${token}` : null
+      if (token) {
+        req.options.headers.authorization = `Bearer ${token}`
+      }
       next()
     }
   }

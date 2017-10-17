@@ -5,7 +5,9 @@ import moment from 'moment'
 import { sessionReasons } from '../../constants'
 
 const PriorSessionRow = ({ session, handleClick }) => {
-  const { studentByStudentId, course, reason, description, timeIn } = session
+  const { studentByStudentId, course, reason, description, timeIn, timeClaimed, timeOut } = session
+  const timeWaitingMs = moment(timeIn).diff(timeClaimed)
+  const sessionDurationMs = moment(timeClaimed).diff(timeOut)
   return (
     <Table.Row onClick={handleClick}>
       <Table.Cell>{studentByStudentId.preferredName}</Table.Cell>
@@ -15,7 +17,8 @@ const PriorSessionRow = ({ session, handleClick }) => {
         </Header>
       </Table.Cell>
       <Table.Cell>{sessionReasons.get(reason)}</Table.Cell>
-      <Table.Cell>{moment(timeIn).fromNow()}</Table.Cell>
+      <Table.Cell>{moment.duration(timeWaitingMs).humanize()}</Table.Cell>
+      <Table.Cell>{moment.duration(sessionDurationMs).humanize()}</Table.Cell>
       <Table.Cell>{description}</Table.Cell>
     </Table.Row>
   )

@@ -3,7 +3,7 @@ import { Card, Header, Table, Modal } from 'semantic-ui-react'
 import styled from 'styled-components'
 import { graphql } from 'react-apollo'
 import { Redirect } from 'react-router-dom'
-import { compose } from 'recompose'
+import { compose } from 'ramda'
 
 import CurrentSessionCard from './CurrentSessionCard'
 import PriorSessionRow from './PriorSessionRow'
@@ -14,7 +14,7 @@ import { ClaimSession, FinishSession, DeleteSession, CopySession } from '../../g
 
 const SqueezedWrapper = styled.div`
   max-width: 80%;
-  margin: 0 auto;
+  margin: 0 auto 30px;
 `
 
 const enhance = compose(
@@ -42,24 +42,27 @@ export class Queue extends React.Component {
   }
 
   handleFormChange = (e, { name, value }) => this.setState({ [name]: value })
-  handleModalClose = event =>
+  handleModalClose = event => {
     this.setState({
       ...this.initialState
     })
+  }
 
   handleClaimSession = session => async event => {
+    const tutorId = this.props.data.currentTutor.id
     await this.props.claimSession({
-      // TODO: Add the actual tutor ID here
-      variables: { sessionId: session.id, tutorId: 1 },
+      variables: { sessionId: session.id, tutorId: tutorId },
       optimisticResponse: {
         claimSession: {
           session: {
             ...session,
-            timeClaimed: true
+            timeClaimed: true,
+            tutorId: tutorId
           }
         }
       }
     })
+    this.props.data.refetch()
   }
 
   handleEndSessionClick = session => async event => {
@@ -86,6 +89,7 @@ export class Queue extends React.Component {
     this.setState({
       ...this.initialState
     })
+    this.props.data.refetch()
   }
 
   handleRequeueSession = session => event => {
@@ -142,10 +146,15 @@ export class Queue extends React.Component {
   }
 
   render() {
-    const { allSessions, loading } = this.props.data
-    const unclaimedSession = ({ timeClaimed, timeOut }) => !timeClaimed && !timeOut
+    const { allSessions, currentTutor, loading } = this.props.data
+    const mySession = ({ tutorId }) => currentTutor.id === tutorId
     const claimedSession = ({ timeClaimed, timeOut }) => timeClaimed && !timeOut
+    const unclaimedSession = ({ timeClaimed, timeOut }) => !timeClaimed && !timeOut
     const priorSession = ({ timeClaimed, timeOut }) => timeClaimed && timeOut
+
+    const currentSessions = allSessions => allSessions.nodes.filter(claimedSession).filter(mySession)
+    const queuedSessions = allSessions => allSessions.nodes.filter(unclaimedSession)
+    const priorSessions = allSessions => allSessions.nodes.filter(priorSession)
     const token = this.props.match.params.token
     if (token != null) {
       return <Redirect to="/queue" />
@@ -162,63 +171,69 @@ export class Queue extends React.Component {
             />
           </Modal>
         )}
-        <Header as="h3" textAlign="left">
-          Current Session(s)
-        </Header>
-        <Card.Group itemsPerRow={3}>
+        {!loading && (
+          <Header as="h3" disabled={currentSessions(allSessions).length === 0} textAlign="left">
+            {currentSessions(allSessions).length > 0 ? 'Current Session' : 'No Current Session'}
+          </Header>
+        )}
+
+        <Card.Group itemsPerRow={3} stackable>
           {!loading &&
-            allSessions.nodes
-              .filter(claimedSession)
-              .map((session, i) => (
-                <CurrentSessionCard
-                  handleRequeueSession={this.handleRequeueSession(session)}
-                  handleEndSession={this.handleEndSessionClick(session)}
-                  key={session.nodeId}
-                  session={session}
-                  raised={i === 0}
-                />
-              ))}
+            currentSessions(allSessions).map((session, i) => (
+              <CurrentSessionCard
+                handleRequeueSession={this.handleRequeueSession(session)}
+                handleEndSession={this.handleEndSessionClick(session)}
+                key={session.nodeId}
+                session={session}
+                raised={i === 0}
+              />
+            ))}
         </Card.Group>
 
         {/* QUEUED SESSIONS */}
-        <Header as="h3" textAlign="left">
-          Queue
-        </Header>
-        <Card.Group itemsPerRow={3}>
+        {!loading && (
+          <Header as="h3" disabled={queuedSessions(allSessions).length === 0} textAlign="left">
+            {queuedSessions(allSessions).length > 0 ? 'Queue' : 'Queue Empty'}
+          </Header>
+        )}
+        <Card.Group itemsPerRow={3} stackable>
           {!loading &&
-            allSessions.nodes
-              .filter(unclaimedSession)
-              .map((session, i) => (
-                <QueueCard
-                  handleDeleteClick={this.handleDeleteSession(session)}
-                  handleClaimClick={this.handleClaimSession(session)}
-                  key={session.nodeId}
-                  session={session}
-                  raised={i === 0}
-                />
-              ))}
+            queuedSessions(allSessions).map((session, i) => (
+              <QueueCard
+                handleDeleteClick={this.handleDeleteSession(session)}
+                handleClaimClick={this.handleClaimSession(session)}
+                key={session.nodeId}
+                session={session}
+                raised={i === 0}
+              />
+            ))}
         </Card.Group>
         {/* PAST SESSIONS */}
-        <Header as="h3" textAlign="left">
-          Prior Sessions
-        </Header>
-        <Table>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell width={3}>Name</Table.HeaderCell>
-              <Table.HeaderCell width={3}>Course</Table.HeaderCell>
-              <Table.HeaderCell width={3}>Reason</Table.HeaderCell>
-              <Table.HeaderCell width={3}>Waiting</Table.HeaderCell>
-              <Table.HeaderCell width={6}>Description</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {!loading &&
-              allSessions.nodes
-                .filter(priorSession)
-                .map(session => <PriorSessionRow key={session.nodeId} session={session} />)}
-          </Table.Body>
-        </Table>
+        {!loading && (
+          <Header as="h3" disabled={priorSessions(allSessions).length === 0} textAlign="left">
+            {priorSessions(allSessions).length > 0 ? 'Prior Sessions' : 'No Prior Sessions'}
+          </Header>
+        )}
+        {!loading &&
+          priorSessions(allSessions).length > 0 && (
+            <Table>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell width={3}>Name</Table.HeaderCell>
+                  <Table.HeaderCell width={3}>Course</Table.HeaderCell>
+                  <Table.HeaderCell width={3}>Reason</Table.HeaderCell>
+                  <Table.HeaderCell width={3}>Waiting</Table.HeaderCell>
+                  <Table.HeaderCell width={3}>Duration</Table.HeaderCell>
+                  <Table.HeaderCell width={6}>Description</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {priorSessions(allSessions).map(session => (
+                  <PriorSessionRow key={session.nodeId} session={session} />
+                ))}
+              </Table.Body>
+            </Table>
+          )}
       </SqueezedWrapper>
     )
   }

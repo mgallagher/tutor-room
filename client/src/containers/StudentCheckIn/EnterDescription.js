@@ -1,12 +1,20 @@
-import React from 'react';
-import { Segment, Form } from 'semantic-ui-react';
+import React from 'react'
+import styled from 'styled-components'
+import { Segment, Form, Header } from 'semantic-ui-react'
 
-import { sessionReasons } from '../../constants';
+import { sessionReasons } from '../../constants'
+
+const CenteredButton = styled(Form.Button)`
+  display: flex;
+  justify-content: center;
+`
 
 const EnterDescription = ({ checked, onChange, onSubmit }) => {
   return (
     <Segment>
-      <h3>Tell us how we can help</h3>
+      <Header as="h3" textAlign="center">
+        Tell us how we can help
+      </Header>
       <Form onSubmit={onSubmit}>
         <Form.Group widths="equal">
           {[...sessionReasons].map(([reason, label]) => (
@@ -21,10 +29,10 @@ const EnterDescription = ({ checked, onChange, onSubmit }) => {
           ))}
         </Form.Group>
         <Form.TextArea autoHeight label="Description" name="description" onChange={onChange} />
-        <Form.Button>Submit</Form.Button>
+        <CenteredButton>Submit</CenteredButton>
       </Form>
     </Segment>
-  );
-};
+  )
+}
 
-export default EnterDescription;
+export default EnterDescription

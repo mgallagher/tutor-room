@@ -51,7 +51,7 @@ const SelectClass = ({ data, handleClassClick, selectedClass }) => {
   }
   return (
     <Segment>
-      <Header as="h3">Select your class</Header>
+      <Header as="h3" textAlign="center">Select your class</Header>
       <List selection verticalAlign="middle">
         {currentStudent.courses.nodes.map(studentClass => (
           <ClassRow

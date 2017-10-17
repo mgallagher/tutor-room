@@ -4,7 +4,11 @@ import { SessionData } from './fragments'
 
 export const AllSessions = gql`
   query allSessions {
-    allSessions(orderBy:TIME_IN_ASC) {
+    currentTutor {
+      firstName
+      id
+    }
+    allSessions(orderBy:TIME_IN_DESC, first:10) {
       totalCount
       nodes {
         ...SessionData

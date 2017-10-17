@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 const SVG = styled.svg`
   fill: #fff;
-  height: 35px;
-  width: 35px;
+  height: 28px;
+  width: 28px;
 `;
 
 const AggieIcon = () => (

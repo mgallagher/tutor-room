@@ -3,39 +3,27 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "@kadira/storybook": "^2.21.0",
-    "react-scripts": "^0.9.5"
+    "react-scripts": "^1.0.14"
   },
   "dependencies": {
-    "apollo-client": "^1.0.4",
-    "graphql-tag": "^2.0.0",
+    "apollo-client": "^1.9.3",
+    "graphql-tag": "^2.5.0",
     "lodash": "^4.17.4",
-    "moment": "^2.18.1",
-    "react": "^15.5.4",
-    "react-apollo": "^1.1.1",
-    "react-dom": "^15.5.4",
+    "moment": "^2.19.1",
+    "ramda": "^0.25.0",
+    "react": "^16.0.0",
+    "react-apollo": "^1.4.16",
+    "react-dom": "^16.0.0",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
-    "recompose": "^0.23.1",
-    "semantic-ui-react": "^0.68.2",
+    "semantic-ui-react": "^0.75.0",
     "styled-components": "^1.4.5"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "storybook": "start-storybook -p 9009 -s public",
-    "build-storybook": "build-storybook -s public"
-  },
-  "reactToolbox": {
-    "include": [
-      "BUTTON",
-      "CARD",
-      "INPUT",
-      "LIST",
-      "PROGRESS_BAR"
-    ]
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"

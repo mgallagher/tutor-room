@@ -1,7 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
+import { Dropdown, Icon } from 'semantic-ui-react'
 
-import AccountIcon from './AccountIcon'
+import { LogOut } from '../../routes'
 import AggieIcon from './AggieIcon'
 
 const Wrapper = styled.div`
@@ -10,7 +11,8 @@ const Wrapper = styled.div`
   align-items: center;
   background-color: ${props => props.theme.primary};
   color: white;
-  padding: 5px 10px;
+  padding: 5px 15px;
+  min-height: 45px;
 `
 
 const Title = styled.span`
@@ -24,17 +26,19 @@ const SubTitle = styled.span`
   font-size: 9pt;
 `
 
-function NavBar() {
-  return (
-    <Wrapper>
-      <AggieIcon />
-      <div>
-        <Title>USU CS Tutor Lab</Title>
-        <SubTitle>(Beta)</SubTitle>
-      </div>
-      <AccountIcon />
-    </Wrapper>
-  )
-}
+const NavBar = () => (
+  <Wrapper>
+    <AggieIcon />
+    <div>
+      <Title>USU CS Tutor Lab</Title>
+      <SubTitle>(Beta)</SubTitle>
+    </div>
+    <Dropdown pointing="top right" icon={<Icon name="user" size="big"/>}>
+      <Dropdown.Menu>
+        <Dropdown.Item icon="log out" text="Log out" onClick={LogOut} />
+      </Dropdown.Menu>
+    </Dropdown>
+  </Wrapper>
+)
 
 export default NavBar

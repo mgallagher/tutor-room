@@ -17,39 +17,33 @@ export const ClaimSession = gql`
   mutation claimSession($sessionId: Int!) {
     claimSession(input: { sessionId: $sessionId }) {
       session {
-        nodeId
-        id
-        timeClaimed
-        timeOut
-        description
+        ...SessionData
       }
     }
   }
+  ${SessionData}
 `
 
 export const FinishSession = gql`
   mutation finishSession($sessionId: Int!, $tag: SessionTag, $notes: String, $requeued: Boolean) {
     finishSession(input: { sessionId: $sessionId, tag: $tag, notes: $notes, requeued: $requeued }) {
       session {
-        nodeId
-        id
-        timeClaimed
-        timeOut
-        description
+        ...SessionData
       }
     }
   }
+  ${SessionData}
 `
 
 export const DeleteSession = gql`
   mutation deleteSession($sessionId: Int!) {
     deleteSession(input: { sessionId: $sessionId }) {
       session {
-        nodeId
-        id
+        ...SessionData
       }
     }
   }
+  ${SessionData}
 `
 
 export const CopySession = gql`

@@ -7,6 +7,13 @@ FROM tutor_room.student s
 WHERE s.a_number = current_setting('jwt.claims.a_number') :: TEXT
 $$ LANGUAGE SQL STABLE;
 
+CREATE FUNCTION tutor_room.current_tutor()
+  RETURNS tutor_room_private.tutor AS $$
+SELECT *
+FROM tutor_room_private.tutor t
+WHERE t.id = current_setting('jwt.claims.usu_id') :: INTEGER
+$$ LANGUAGE SQL STABLE;
+
 -- Mutation functions
 CREATE FUNCTION tutor_room_private.start_session(a_number TEXT, course_id INTEGER, reason tutor_room.session_reason, description TEXT)
   RETURNS tutor_room.session AS $$
@@ -56,7 +63,7 @@ SELECT tutor_room_private.finish_session($1, $2, $3, $4)
 $$ LANGUAGE SQL VOLATILE;
 
 
-CREATE FUNCTION tutor_room_private.delete_session(session_id INTEGER)
+CREATE FUNCTION tutor_room.delete_session(session_id INTEGER)
   RETURNS tutor_room.session AS $$
 DELETE FROM tutor_room.session
 WHERE id = $1
@@ -90,12 +97,12 @@ $$ LANGUAGE SQL VOLATILE;
 --   SELECT * FROM copied_session;
 -- $$ LANGUAGE SQL VOLATILE;
 
-CREATE FUNCTION tutor_room.latest_average_wait()
+CREATE OR REPLACE FUNCTION tutor_room.latest_average_wait()
   RETURNS INTERVAL AS $$
-  WITH completed_sessions AS (
-    SELECT * FROM tutor_room.session WHERE time_in IS NOT NULL AND time_claimed IS NOT NULL AND time_out IS NOT NULL
+  WITH claimed_sessions AS (
+    SELECT * FROM tutor_room.session WHERE time_in IS NOT NULL AND time_claimed IS NOT NULL
   )
-  SELECT AVG(time_claimed - time_in) average_wait FROM completed_sessions
+  SELECT AVG(time_claimed - time_in) average_wait FROM claimed_sessions WHERE time_in::date = CURRENT_DATE
 $$
 LANGUAGE SQL STABLE;
 

@@ -29,11 +29,11 @@ const AverageWaitLabel = ({ data }) => {
     seconds: latestAverageWait ? latestAverageWait.seconds : 0
   })
   return (
-    <Label size="big">
+    <Label size="huge">
       <Icon name="wait" />
       Average wait:
       <Label.Detail>
-        {loading ? '...' : duration.asMinutes() ? `${duration.asMinutes()} min.` : 'No wait!'}
+        {loading ? '...' : duration.asMinutes() ? `about ${duration.humanize()}` : 'No wait!'}
       </Label.Detail>
     </Label>
   )

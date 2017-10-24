@@ -1,4 +1,5 @@
 // @flow
+import 'babel-polyfill'
 import express from 'express'
 import { postgraphql } from 'postgraphql'
 import passport from 'passport'

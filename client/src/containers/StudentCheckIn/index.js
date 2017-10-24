@@ -25,7 +25,8 @@ const AverageWaitLabel = ({ data }) => {
   const { latestAverageWait, loading } = data
   const duration = moment.duration({
     hours: latestAverageWait ? latestAverageWait.hours : 0,
-    minutes: latestAverageWait ? latestAverageWait.minutes : 0
+    minutes: latestAverageWait ? latestAverageWait.minutes : 0,
+    seconds: latestAverageWait ? latestAverageWait.seconds : 0
   })
   return (
     <Label size="big">

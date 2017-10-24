@@ -1,11 +1,11 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from 'react'
+import styled from 'styled-components'
 
 const SVG = styled.svg`
   fill: #fff;
   height: 28px;
   width: 28px;
-`;
+`
 
 const AggieIcon = () => (
   <SVG viewBox="23 53 34.728 32.982" xmlns="http://www.w3.org/2000/svg">
@@ -16,6 +16,6 @@ const AggieIcon = () => (
       transform="translate(-1670 95)"
     />
   </SVG>
-);
+)
 
-export default AggieIcon;
+export default AggieIcon

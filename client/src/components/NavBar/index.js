@@ -33,7 +33,7 @@ const NavBar = () => (
       <Title>USU CS Tutor Lab</Title>
       <SubTitle>(Beta)</SubTitle>
     </div>
-    <Dropdown pointing="top right" icon={<Icon name="user" size="big"/>}>
+    <Dropdown pointing="top right" icon={<Icon name="user" size="big" />}>
       <Dropdown.Menu>
         <Dropdown.Item icon="log out" text="Log out" onClick={LogOut} />
       </Dropdown.Menu>

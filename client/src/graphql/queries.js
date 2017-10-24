@@ -21,8 +21,9 @@ export const AllSessions = gql`
 export const AverageWait = gql`
   query averageWait {
     latestAverageWait {
-      minutes
       hours
+      minutes
+      seconds
     }
   }
 `

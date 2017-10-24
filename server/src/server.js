@@ -110,8 +110,9 @@ app.use('/login/cas', (req: express$Request, res, next) => {
   })(req, res, next)
 })
 
+const db = config.database
 app.use(
-  postgraphql(`postgres://postgres:${config.database.password}@localhost:5432/postgres`, 'tutor_room', {
+  postgraphql(`postgres://${db.user}:${db.password}@${db.host}:5432/${db.database}`, 'tutor_room', {
     graphiql: config.debug,
     disableDefaultMutations: true,
     enableCors: true,

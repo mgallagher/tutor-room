@@ -18,7 +18,7 @@ import config from './config'
 
 var app = express()
 
-const getOrSyncStudent = async (aNumber: string | number) => {
+const getOrSyncStudent = async (aNumber: string) => {
   const student = await getStudent(aNumber)
   if (student != null) {
     console.log(aNumber, 'FOUND in database')

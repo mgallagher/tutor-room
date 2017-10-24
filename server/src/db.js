@@ -41,7 +41,7 @@ export const getStudent = (aggieNumber: string | number) => {
   })
 }
 
-export const insertStudent = (student: Student): Promise<StudentRecord> => {
+export const insertStudent = (student: Student) => {
   return psql('tutor_room.student')
     .insert({
       id: student.id,
@@ -57,6 +57,11 @@ export const insertStudent = (student: Student): Promise<StudentRecord> => {
       )
       return student[0]
     })
+    .catch(error =>
+      console.log(
+        `ERROR! Unable to insert student (A-number: ${student.aNumber}, id: ${student.id}) into DB with error:\n${error}`
+      )
+    )
 }
 
 // COURSES
@@ -89,7 +94,7 @@ export const insertCourseQuery = (course: Course) => {
 }
 
 export const safeInsertCourse = (course: Course) => {
-  console.log('Inserting course:\n', course)
+  console.log('Inserting course:', course.title)
   return safeInsert(insertCourseQuery(course)).then((courses: CourseRecord[]) => courses)
 }
 

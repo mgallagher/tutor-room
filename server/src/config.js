@@ -22,7 +22,7 @@ const config = {
     frontendURL: 'http://localhost:3000',
     serverURL: 'http://localhost:5000',
     ssoBaseURL: 'http://localhost:8080/cas',
-    casLoginURL: 'http://localhost:8080/cas/login?service=http://localhost:5000/login/cas'
+    casLoginURL: 'http://localhost:8080/cas/login?service=http://localhost:5000/login/cas&renew=true'
   },
   production: {
     jwtSecret: process.env.JWT_SECRET,
@@ -32,7 +32,7 @@ const config = {
     frontendURL: 'https://komaru.eng.usu.edu',
     serverURL: 'https://komaru.eng.usu.edu',
     ssoBaseURL: 'https://login.usu.edu/cas',
-    casLoginURL: 'https://login.usu.edu/cas/login?service=https://komaru.eng.usu.edu/login/cas'
+    casLoginURL: 'https://login.usu.edu/cas/login?service=https://komaru.eng.usu.edu/login/cas&renew=true'
   }
 }
 

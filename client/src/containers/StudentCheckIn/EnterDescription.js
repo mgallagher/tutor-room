@@ -28,7 +28,7 @@ const EnterDescription = ({ checked, onChange, onSubmit }) => {
             />
           ))}
         </Form.Group>
-        <Form.TextArea autoHeight label="Description" name="description" onChange={onChange} />
+        <Form.TextArea autoHeight label="Description" name="description" onChange={onChange} spellcheck="false"/>
         <CenteredButton>Submit</CenteredButton>
       </Form>
     </Segment>

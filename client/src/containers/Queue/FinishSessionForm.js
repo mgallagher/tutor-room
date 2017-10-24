@@ -1,7 +1,7 @@
-import React from 'react';
-import { Segment, Form } from 'semantic-ui-react';
+import React from 'react'
+import { Segment, Form } from 'semantic-ui-react'
 
-import { sessionTags } from '../../constants';
+import { sessionTags } from '../../constants'
 
 const FinishSessionForm = ({ checked, onChange, onSubmit }) => {
   return (
@@ -20,11 +20,17 @@ const FinishSessionForm = ({ checked, onChange, onSubmit }) => {
             />
           ))}
         </Form.Group>
-        <Form.Input label="Notes" name="sessionNotes" placeholder="Optional" onChange={onChange} />
+        <Form.Input
+          label="Notes"
+          name="sessionNotes"
+          placeholder="Optional"
+          spellcheck="false"
+          onChange={onChange}
+        />
         <Form.Button disabled={checked ? false : true}>Submit</Form.Button>
       </Form>
     </Segment>
-  );
-};
+  )
+}
 
-export default FinishSessionForm;
+export default FinishSessionForm

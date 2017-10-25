@@ -24,7 +24,7 @@ const FinishSessionForm = ({ checked, onChange, onSubmit }) => {
           label="Notes"
           name="sessionNotes"
           placeholder="Optional"
-          spellcheck="false"
+          spellCheck="false"
           onChange={onChange}
         />
         <Form.Button disabled={checked ? false : true}>Submit</Form.Button>

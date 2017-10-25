@@ -4,14 +4,14 @@ CREATE FUNCTION tutor_room.current_student()
   RETURNS tutor_room.student AS $$
 SELECT *
 FROM tutor_room.student s
-WHERE s.a_number = current_setting('jwt.claims.a_number') :: TEXT
+WHERE s.a_number = current_setting('jwt.claims.a_number', true) :: TEXT
 $$ LANGUAGE SQL STABLE;
 
 CREATE FUNCTION tutor_room.current_tutor()
   RETURNS tutor_room_private.tutor AS $$
 SELECT *
 FROM tutor_room_private.tutor t
-WHERE t.id = current_setting('jwt.claims.usu_id') :: INTEGER
+WHERE t.id = current_setting('jwt.claims.usu_id', true) :: INTEGER
 $$ LANGUAGE SQL STABLE;
 
 -- Mutation functions
@@ -29,7 +29,7 @@ SELECT tutor_room_private.start_session(current_setting('jwt.claims.a_number'), 
 $$ LANGUAGE SQL VOLATILE;
 
 
-CREATE OR REPLACE FUNCTION tutor_room_private.claim_session(session_id INTEGER, tutor_id INTEGER)
+CREATE FUNCTION tutor_room_private.claim_session(session_id INTEGER, tutor_id INTEGER)
   RETURNS tutor_room.session AS $$
 UPDATE
   tutor_room.session

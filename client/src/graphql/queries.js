@@ -27,3 +27,16 @@ export const AverageWait = gql`
     }
   }
 `
+
+export const CurrentUser = gql`
+  query currentUser {
+    currentTutor {
+      id
+      preferredName
+    }
+    currentStudent {
+      id
+      preferredName
+    }
+  }
+`

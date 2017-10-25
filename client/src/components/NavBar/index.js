@@ -1,9 +1,12 @@
 import React from 'react'
-import styled from 'styled-components'
 import { Dropdown, Icon } from 'semantic-ui-react'
+import { graphql } from 'react-apollo'
+import styled from 'styled-components'
 
+import config from '../../config'
 import { LogOut } from '../../routes'
 import AggieIcon from './AggieIcon'
+import { CurrentUser } from '../../graphql/queries'
 
 const Wrapper = styled.div`
   display: flex;
@@ -26,19 +29,46 @@ const SubTitle = styled.span`
   font-size: 9pt;
 `
 
-const NavBar = () => (
-  <Wrapper>
-    <AggieIcon />
-    <div>
-      <Title>USU CS Tutor Lab</Title>
-      <SubTitle>(Beta)</SubTitle>
-    </div>
-    <Dropdown pointing="top right" icon={<Icon name="user" size="big" />}>
-      <Dropdown.Menu>
-        <Dropdown.Item icon="log out" text="Log out" onClick={LogOut} />
-      </Dropdown.Menu>
-    </Dropdown>
-  </Wrapper>
-)
+const currentUserName = ({ currentTutor, currentStudent }) => {
+  if (currentTutor) {
+    return currentTutor.preferredName
+  } else if (currentStudent) {
+    return currentStudent.preferredName
+  } else {
+    return null
+  }
+}
 
-export default NavBar
+const DropdownItems = ({ currentTutor, currentStudent }) => {
+  const userName = currentUserName({ currentTutor, currentStudent })
+  if (userName) {
+    return [
+      <Dropdown.Item key={1} text={userName}/>,
+      <Dropdown.Item key={2} icon="log out" text="Log out" onClick={LogOut} />
+    ]
+  }
+  else {
+    return [
+      <Dropdown.Item key={1} href={config.casLoginURL} icon="external" text="Log in"/>
+    ]
+  }
+}
+
+const NavBar = ({ data }) => {
+  return (
+    <Wrapper>
+      <AggieIcon />
+      <div>
+        <Title>USU CS Tutor Lab</Title>
+        <SubTitle>(Beta)</SubTitle>
+      </div>
+      <Dropdown pointing="top right" icon={<Icon name="user" size="big" />}>
+        <Dropdown.Menu>
+          {!data.loading && DropdownItems(data)}
+        </Dropdown.Menu>
+      </Dropdown>
+    </Wrapper>
+  )
+}
+
+export default graphql(CurrentUser)(NavBar)

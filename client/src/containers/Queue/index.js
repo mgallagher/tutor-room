@@ -153,7 +153,8 @@ export class Queue extends React.Component {
     const priorSession = ({ timeClaimed, timeOut }) => timeClaimed && timeOut
 
     const currentSessions = allSessions => allSessions.nodes.filter(claimedSession).filter(mySession)
-    const queuedSessions = allSessions => allSessions.nodes.filter(unclaimedSession)
+    const queuedSessions = allSessions =>
+      allSessions.nodes.filter(unclaimedSession).sort((a, b) => new Date(a.timeIn) - new Date(b.timeIn))
     const priorSessions = allSessions => allSessions.nodes.filter(priorSession)
     const token = this.props.match.params.token
     if (token != null) {
@@ -220,10 +221,10 @@ export class Queue extends React.Component {
               <Table.Header>
                 <Table.Row>
                   <Table.HeaderCell width={3}>Name</Table.HeaderCell>
-                  <Table.HeaderCell width={3}>Course</Table.HeaderCell>
-                  <Table.HeaderCell width={3}>Reason</Table.HeaderCell>
-                  <Table.HeaderCell width={3}>Waiting</Table.HeaderCell>
-                  <Table.HeaderCell width={3}>Duration</Table.HeaderCell>
+                  <Table.HeaderCell width={1}>Course</Table.HeaderCell>
+                  <Table.HeaderCell width={2}>Reason</Table.HeaderCell>
+                  <Table.HeaderCell width={2}>Waiting</Table.HeaderCell>
+                  <Table.HeaderCell width={2}>Duration</Table.HeaderCell>
                   <Table.HeaderCell width={6}>Description</Table.HeaderCell>
                 </Table.Row>
               </Table.Header>

@@ -152,7 +152,7 @@ export class Queue extends React.Component {
     const claimedSession = ({ timeClaimed, timeOut }) => timeClaimed && !timeOut
     const unclaimedSession = ({ timeClaimed, timeOut }) => !timeClaimed && !timeOut
     const priorSession = ({ timeClaimed, timeOut }) => timeClaimed && timeOut
-    // Temporary workaround until we can get date filtering from the API
+    // TODO: Temporary workaround until we get date filtering from the API
     if (!loading) {
       // Only show today's sessions
       allSessions = {
@@ -169,6 +169,10 @@ export class Queue extends React.Component {
     const token = this.props.match.params.token
     if (token != null) {
       return <Redirect to="/queue" />
+    }
+    // TODO: Temporary workaround to keep non-tutors out of the queue manager
+    if (localStorage.getItem('token') == null || (!loading && currentTutor === null)) {
+      return <Redirect to="/logout" />
     }
     return (
       <SqueezedWrapper>

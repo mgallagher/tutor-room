@@ -84,8 +84,7 @@ class StudentCheckIn extends React.Component {
         {!this.state.submitted && (
           <SqueezedColumn>
             <FlexCenter>
-              {!this.props.data.loading &&
-                this.props.data.latestAverageWait && <AverageWaitWithData data={this.props.data} />}
+              <AverageWaitWithData />
             </FlexCenter>
             <SelectClass handleClassClick={this.handleClassSelect} selectedClass={this.state.courseId} />
             <EnterDescription

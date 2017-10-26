@@ -8,6 +8,7 @@ import { Segment, List, Header, Icon } from 'semantic-ui-react'
 const STUDENT_CLASSES_QUERY = gql`
   query {
     currentStudent {
+      id
       courses: studentCoursesByStudentId {
         nodes {
           course: courseByCourseId {

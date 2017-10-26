@@ -8,7 +8,7 @@ export const AllSessions = gql`
       firstName
       id
     }
-    allSessions(orderBy:TIME_IN_DESC, first:10) {
+    allSessions(orderBy:TIME_IN_DESC, first:40) {
       totalCount
       nodes {
         ...SessionData

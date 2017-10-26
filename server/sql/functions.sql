@@ -1,13 +1,13 @@
 BEGIN;
 
-CREATE FUNCTION tutor_room.current_student()
+CREATE OR REPLACE FUNCTION tutor_room.current_student()
   RETURNS tutor_room.student AS $$
 SELECT *
 FROM tutor_room.student s
 WHERE s.a_number = current_setting('jwt.claims.a_number', true) :: TEXT
 $$ LANGUAGE SQL STABLE;
 
-CREATE FUNCTION tutor_room.current_tutor()
+CREATE OR REPLACE FUNCTION tutor_room.current_tutor()
   RETURNS tutor_room_private.tutor AS $$
 SELECT *
 FROM tutor_room_private.tutor t
@@ -15,7 +15,7 @@ WHERE t.id = current_setting('jwt.claims.usu_id', true) :: INTEGER
 $$ LANGUAGE SQL STABLE;
 
 -- Mutation functions
-CREATE FUNCTION tutor_room_private.start_session(a_number TEXT, course_id INTEGER, reason tutor_room.session_reason, description TEXT)
+CREATE OR REPLACE FUNCTION tutor_room_private.start_session(a_number TEXT, course_id INTEGER, reason tutor_room.session_reason, description TEXT)
   RETURNS tutor_room.session AS $$
 INSERT INTO
   tutor_room.session (student_id, course_id, reason, description, time_in)
@@ -23,13 +23,13 @@ INSERT INTO
 RETURNING *
 $$ LANGUAGE SQL VOLATILE;
 
-CREATE FUNCTION tutor_room.start_session(course_id INTEGER, reason tutor_room.session_reason, description TEXT)
+CREATE OR REPLACE FUNCTION tutor_room.start_session(course_id INTEGER, reason tutor_room.session_reason, description TEXT)
   RETURNS tutor_room.session AS $$
 SELECT tutor_room_private.start_session(current_setting('jwt.claims.a_number'), $1, $2, $3)
 $$ LANGUAGE SQL VOLATILE;
 
 
-CREATE FUNCTION tutor_room_private.claim_session(session_id INTEGER, tutor_id INTEGER)
+CREATE OR REPLACE FUNCTION tutor_room_private.claim_session(session_id INTEGER, tutor_id INTEGER)
   RETURNS tutor_room.session AS $$
 UPDATE
   tutor_room.session
@@ -46,7 +46,7 @@ SELECT tutor_room_private.claim_session($1, current_setting('jwt.claims.usu_id')
 $$ LANGUAGE SQL VOLATILE;
 
 
-CREATE FUNCTION tutor_room_private.finish_session(session_id INTEGER, tag tutor_room.session_tag default NULL, notes TEXT default NULL, requeued BOOLEAN default false)
+CREATE OR REPLACE FUNCTION tutor_room_private.finish_session(session_id INTEGER, tag tutor_room.session_tag default NULL, notes TEXT default NULL, requeued BOOLEAN default false)
   RETURNS tutor_room.session AS $$
 UPDATE
   tutor_room.session
@@ -57,13 +57,13 @@ WHERE
 RETURNING *
 $$ LANGUAGE SQL VOLATILE;
 
-CREATE FUNCTION tutor_room.finish_session(session_id INTEGER, tag tutor_room.session_tag default NULL, notes TEXT default NULL, requeued BOOLEAN default false)
+CREATE OR REPLACE FUNCTION tutor_room.finish_session(session_id INTEGER, tag tutor_room.session_tag default NULL, notes TEXT default NULL, requeued BOOLEAN default false)
   RETURNS tutor_room.session AS $$
 SELECT tutor_room_private.finish_session($1, $2, $3, $4)
 $$ LANGUAGE SQL VOLATILE;
 
 
-CREATE FUNCTION tutor_room.delete_session(session_id INTEGER)
+CREATE OR REPLACE FUNCTION tutor_room.delete_session(session_id INTEGER)
   RETURNS tutor_room.session AS $$
 DELETE FROM tutor_room.session
 WHERE id = $1
@@ -71,7 +71,7 @@ RETURNING *
 $$ LANGUAGE SQL VOLATILE;
 
 
-CREATE FUNCTION tutor_room.copy_session(session_id INTEGER)
+CREATE OR REPLACE FUNCTION tutor_room.copy_session(session_id INTEGER)
   RETURNS tutor_room.session AS $$
 INSERT INTO tutor_room.session (student_id, course_id, reason, time_in, description)
 SELECT student_id, course_id, reason, time_in, description FROM tutor_room.session WHERE id = $1
@@ -79,34 +79,16 @@ RETURNING *
 $$ LANGUAGE SQL VOLATILE;
 
 
--- CREATE FUNCTION tutor_room.requeue_session(session_id INTEGER)
---   RETURNS setof tutor_room.session AS $$
---   WITH
---       finished_session AS (
---         SELECT *
---         FROM tutor_room.finish_session($1, requeued => TRUE)
---     ),
---       copied_session AS (
---         SELECT copied.*
---         FROM finished_session f
---           JOIN tutor_room.student s ON (f.student_id = s.id)
---           , tutor_room.start_session(s.a_number, f.crn, f.reason, f.description) copied
---     )
---   SELECT * FROM finished_session
---   UNION
---   SELECT * FROM copied_session;
--- $$ LANGUAGE SQL VOLATILE;
-
 CREATE OR REPLACE FUNCTION tutor_room.latest_average_wait()
   RETURNS INTERVAL AS $$
   WITH claimed_sessions AS (
     SELECT * FROM tutor_room.session WHERE time_in IS NOT NULL AND time_claimed IS NOT NULL
   )
-  SELECT AVG(time_claimed - time_in) average_wait FROM claimed_sessions WHERE time_in::date = CURRENT_DATE
+  SELECT AVG(time_claimed - time_in) average_wait FROM claimed_sessions WHERE time_in > (now() - INTERVAL '1 hour');
 $$
 LANGUAGE SQL STABLE;
 
--- Only for development purposes!
+-- Definitely only for development purposes!
 -- CREATE FUNCTION reset_sessions() returns void
 -- LANGUAGE SQL
 -- AS $$

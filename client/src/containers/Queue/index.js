@@ -146,12 +146,22 @@ export class Queue extends React.Component {
   }
 
   render() {
-    const { allSessions, currentTutor, loading } = this.props.data
+    const { currentTutor, loading } = this.props.data
+    var { allSessions } = this.props.data
     const mySession = ({ tutorId }) => currentTutor.id === tutorId
     const claimedSession = ({ timeClaimed, timeOut }) => timeClaimed && !timeOut
     const unclaimedSession = ({ timeClaimed, timeOut }) => !timeClaimed && !timeOut
     const priorSession = ({ timeClaimed, timeOut }) => timeClaimed && timeOut
-
+    // Temporary workaround until we can get date filtering from the API
+    if (!loading) {
+      // Only show today's sessions
+      allSessions = {
+        ...allSessions,
+        nodes: allSessions.nodes.filter(
+          session => new Date(session.timeIn).toLocaleDateString() === new Date().toLocaleDateString()
+        )
+      }
+    }
     const currentSessions = allSessions => allSessions.nodes.filter(claimedSession).filter(mySession)
     const queuedSessions = allSessions =>
       allSessions.nodes.filter(unclaimedSession).sort((a, b) => new Date(a.timeIn) - new Date(b.timeIn))
@@ -209,7 +219,7 @@ export class Queue extends React.Component {
               />
             ))}
         </Card.Group>
-        {/* PAST SESSIONS */}
+        {/* PRIOR SESSIONS */}
         {!loading && (
           <Header as="h3" disabled={priorSessions(allSessions).length === 0} textAlign="left">
             {priorSessions(allSessions).length > 0 ? 'Prior Sessions' : 'No Prior Sessions'}

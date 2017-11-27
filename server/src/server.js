@@ -4,6 +4,7 @@ import { postgraphql } from 'postgraphql'
 import passport from 'passport'
 import passportCas from 'passport-cas'
 import jwt from 'jsonwebtoken'
+import GraphileBuildPgContribConnectionFilter from '../plugins/postgraphile-filter-plugins'
 import {
   getStudent,
   getTutor,
@@ -117,7 +118,8 @@ app.use(
     disableDefaultMutations: true,
     enableCors: true,
     jwtSecret: config.jwtSecret,
-    jwtPgTypeIdentifier: 'tutor_room.jwt_token'
+    jwtPgTypeIdentifier: 'tutor_room.jwt_token',
+    appendPlugins: [GraphileBuildPgContribConnectionFilter]
   })
 )
 

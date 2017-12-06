@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Header, Table, Modal } from 'semantic-ui-react'
+import { Card, Header, Table, Modal, Transition } from 'semantic-ui-react'
 import styled from 'styled-components'
 import { graphql } from 'react-apollo'
 import { Redirect } from 'react-router-dom'
@@ -50,17 +50,17 @@ export class Queue extends React.Component {
   }
 
   handleClaimSession = session => async event => {
-    console.log('handleClaim', session)
-    const tutorId = this.props.data.currentTutor.id
+    const tutor = this.props.data.currentTutor
     await this.props.claimSession({
-      variables: { sessionId: session.id, tutorId: tutorId },
+      variables: { sessionId: session.id, tutorId: tutor.id },
       optimisticResponse: {
         claimSession: {
           __typename: 'ClaimSessionPayload',
           session: {
             ...session,
             timeClaimed: new Date(),
-            tutorId: tutorId
+            tutorId: tutor.id,
+            tutor
           }
         }
       }
@@ -147,6 +147,7 @@ export class Queue extends React.Component {
           return {
             ...previousResult,
             allSessions: {
+              ...previousResult.allSessions,
               nodes: previousResult.allSessions.nodes.filter(s => s.id !== session.id)
             }
           }
@@ -158,7 +159,6 @@ export class Queue extends React.Component {
   render() {
     const { currentTutor, loading } = this.props.data
     var { allSessions } = this.props.data
-    // const mySession = (session) => {console.log('s', session); return currentTutor.id === session.tutor.id}
     const mySession = ({ tutorId }) => currentTutor.id === tutorId
     const claimedSession = ({ timeClaimed, timeOut }) => timeClaimed && !timeOut
     const unclaimedSession = ({ timeClaimed, timeOut }) => !timeClaimed && !timeOut
@@ -171,7 +171,6 @@ export class Queue extends React.Component {
     if (token != null) {
       return <Redirect to="/queue" />
     }
-    // LEFT OFF HERE - Getting errors when claiming a session
     // TODO: Temporary workaround to keep non-tutors out of the queue manager
     if (localStorage.getItem('token') == null || (!loading && currentTutor === null)) {
       return <Redirect to="/logout" />
@@ -239,9 +238,10 @@ export class Queue extends React.Component {
                   <Table.HeaderCell width={3}>Name</Table.HeaderCell>
                   <Table.HeaderCell width={1}>Course</Table.HeaderCell>
                   <Table.HeaderCell width={2}>Tutor</Table.HeaderCell>
-                  <Table.HeaderCell width={2}>Waiting</Table.HeaderCell>
-                  <Table.HeaderCell width={2}>Duration</Table.HeaderCell>
-                  <Table.HeaderCell width={6}>Description</Table.HeaderCell>
+                  <Table.HeaderCell width={1}>Time In</Table.HeaderCell>
+                  <Table.HeaderCell width={1}>Waiting</Table.HeaderCell>
+                  <Table.HeaderCell width={1}>Duration</Table.HeaderCell>
+                  <Table.HeaderCell width={5}>Description</Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
               <Table.Body>

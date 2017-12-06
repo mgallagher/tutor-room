@@ -3,21 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "react-scripts": "^1.0.14"
+    "react-scripts": "^1.0.17"
   },
   "dependencies": {
     "apollo-client": "^1.9.3",
     "graphql-tag": "^2.5.0",
-    "lodash": "^4.17.4",
-    "moment": "^2.19.1",
+    "moment": "^2.19.3",
     "ramda": "^0.25.0",
-    "react": "^16.0.0",
+    "react": "^16.2.0",
     "react-apollo": "^1.4.16",
-    "react-dom": "^16.0.0",
+    "react-dom": "^16.2.0",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
-    "semantic-ui-react": "^0.75.0",
-    "styled-components": "^1.4.5"
+    "semantic-ui-react": "^0.77.0",
+    "styled-components": "^2.2.4"
   },
   "scripts": {
     "start": "react-scripts start",

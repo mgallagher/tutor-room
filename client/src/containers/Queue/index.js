@@ -1,10 +1,11 @@
 import React from 'react'
-import { Card, Header, Table, Modal, Transition } from 'semantic-ui-react'
+import { Card, Header, Table, Modal } from 'semantic-ui-react'
 import styled from 'styled-components'
 import { graphql } from 'react-apollo'
 import { Redirect } from 'react-router-dom'
 import { compose } from 'ramda'
 import moment from 'moment'
+import openSocket from 'socket.io-client'
 
 import CurrentSessionCard from './CurrentSessionCard'
 import PriorSessionRow from './PriorSessionRow'
@@ -34,12 +35,21 @@ export class Queue extends React.Component {
     sessionNotes: null
   }
   state = this.initialState
+  socket = openSocket('http://localhost:8000')
 
   componentWillMount() {
     const token = this.props.match.params.token
     if (token !== undefined) {
       localStorage.setItem('token', token)
     }
+    this.socket.on('queueUpdated', () => {
+      console.log('Queue updated!')
+      this.props.data.refetch()
+    })
+  }
+
+  emitQueueUpdate() {
+    this.socket.emit('queueUpdated', this.props.data.currentTutor)
   }
 
   handleFormChange = (e, { name, value }) => this.setState({ [name]: value })
@@ -65,16 +75,16 @@ export class Queue extends React.Component {
         }
       }
     })
-    this.props.data.refetch()
+    this.emitQueueUpdate()
   }
 
   handleEndSessionClick = session => async event => {
     await this.setState({ modalOpen: true, session: session })
   }
 
-  handleEndSessionSubmit = event => {
+  handleEndSessionSubmit = async event => {
     event.preventDefault()
-    this.props.finishSession({
+    await this.props.finishSession({
       variables: {
         sessionId: this.state.session.id,
         tag: this.state.sessionTag,
@@ -93,42 +103,45 @@ export class Queue extends React.Component {
     this.setState({
       ...this.initialState
     })
-    this.props.data.refetch()
+    this.emitQueueUpdate()
   }
 
-  handleRequeueSession = session => event => {
-    this.props.finishSession({
-      variables: {
-        sessionId: session.id,
-        requeued: true
-      },
-      optimisticResponse: {
-        finishSession: {
-          __typename: 'FinishSessionPayload',
-          session: {
-            ...session,
-            timeOut: new Date()
-          }
-        }
-      }
-    })
-    this.props.copySession({
-      variables: {
-        sessionId: session.id
-      },
-      updateQueries: {
-        allSessions: (previousResult, { mutationResult }) => {
-          return {
-            ...previousResult,
-            allSessions: {
-              __typename: 'SessionsConnection',
-              totalCount: previousResult.allSessions.totalCount + 1,
-              nodes: [...previousResult.allSessions.nodes, mutationResult.data.copySession.session]
+  handleRequeueSession = session => async event => {
+    await Promise.all([
+      this.props.finishSession({
+        variables: {
+          sessionId: session.id,
+          requeued: true
+        },
+        optimisticResponse: {
+          finishSession: {
+            __typename: 'FinishSessionPayload',
+            session: {
+              ...session,
+              timeOut: new Date()
             }
           }
         }
-      }
-    })
+      }),
+      this.props.copySession({
+        variables: {
+          sessionId: session.id
+        },
+        updateQueries: {
+          allSessions: (previousResult, { mutationResult }) => {
+            return {
+              ...previousResult,
+              allSessions: {
+                __typename: 'SessionsConnection',
+                totalCount: previousResult.allSessions.totalCount + 1,
+                nodes: [...previousResult.allSessions.nodes, mutationResult.data.copySession.session]
+              }
+            }
+          }
+        }
+      })
+    ])
+    this.emitQueueUpdate()
   }
 
   handleDeleteSession = session => async event => {
@@ -154,6 +167,7 @@ export class Queue extends React.Component {
         }
       }
     })
+    this.emitQueueUpdate()
   }
 
   render() {

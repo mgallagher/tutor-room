@@ -5,6 +5,7 @@ import passport from 'passport'
 import passportCas from 'passport-cas'
 import jwt from 'jsonwebtoken'
 import GraphileBuildPgContribConnectionFilter from '../plugins/postgraphile-filter-plugins'
+import io from 'socket.io'
 import {
   getStudent,
   getTutor,
@@ -123,6 +124,15 @@ app.use(
   })
 )
 
+const socketIO = io()
+socketIO.on('connection', client => {
+  client.on('queueUpdated', user => {
+    console.log('Queue updated by', user)
+    client.broadcast.emit('queueUpdated')
+  })
+})
+
+socketIO.listen(8000)
 app.listen(5000, () => {
   console.log('Tutor Room server listening on port 5000!')
 })

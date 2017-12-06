@@ -5,7 +5,7 @@ import { graphql } from 'react-apollo'
 import { Redirect } from 'react-router-dom'
 import { compose } from 'ramda'
 import moment from 'moment'
-import openSocket from 'socket.io-client'
+import { socket } from '../../constants'
 
 import CurrentSessionCard from './CurrentSessionCard'
 import PriorSessionRow from './PriorSessionRow'
@@ -35,21 +35,20 @@ export class Queue extends React.Component {
     sessionNotes: null
   }
   state = this.initialState
-  socket = openSocket('http://localhost:8000')
 
   componentWillMount() {
     const token = this.props.match.params.token
     if (token !== undefined) {
       localStorage.setItem('token', token)
     }
-    this.socket.on('queueUpdated', () => {
-      console.log('Queue updated!')
+    socket.on('queueUpdated', () => {
+      console.log('Queue update message received!')
       this.props.data.refetch()
     })
   }
 
   emitQueueUpdate() {
-    this.socket.emit('queueUpdated', this.props.data.currentTutor)
+    socket.emit('queueUpdated', this.props.data.currentTutor)
   }
 
   handleFormChange = (e, { name, value }) => this.setState({ [name]: value })

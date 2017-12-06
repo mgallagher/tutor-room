@@ -10,6 +10,7 @@ import SelectClass from './SelectClass'
 import EnterDescription from './EnterDescription'
 import { StartSession } from '../../graphql/mutations'
 import { AverageWait } from '../../graphql/queries'
+import { socket } from '../../constants'
 
 const SqueezedColumn = styled(Grid.Column)`max-width: 450px;`
 
@@ -66,6 +67,7 @@ class StudentCheckIn extends React.Component {
     await this.props.mutate({
       variables: { courseId, description, reason }
     })
+    socket.emit('queueUpdated')
     this.setState({ submitted: true })
     setTimeout(() => {
       this.setState({ redirect: true })

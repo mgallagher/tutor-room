@@ -8,9 +8,9 @@ WHERE s.a_number = current_setting('jwt.claims.a_number', true) :: TEXT
 $$ LANGUAGE SQL STABLE;
 
 CREATE OR REPLACE FUNCTION tutor_room.current_tutor()
-  RETURNS tutor_room_private.tutor AS $$
+  RETURNS tutor_room.tutor AS $$
 SELECT *
-FROM tutor_room_private.tutor t
+FROM tutor_room.tutor t
 WHERE t.id = current_setting('jwt.claims.usu_id', true) :: INTEGER
 $$ LANGUAGE SQL STABLE;
 

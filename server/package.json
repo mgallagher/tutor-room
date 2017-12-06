@@ -28,7 +28,7 @@
     "flow-bin": "^0.54.0"
   },
   "scripts": {
-    "start": "babel-node server.js",
+    "start": "babel-node src/server.js",
     "build-server": "rm -rf build && ./node_modules/.bin/babel src -s -d build"
   },
   "babel": {

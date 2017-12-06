@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { graphql } from 'react-apollo'
 import { Redirect } from 'react-router-dom'
 import { compose } from 'ramda'
+import moment from 'moment'
 
 import CurrentSessionCard from './CurrentSessionCard'
 import PriorSessionRow from './PriorSessionRow'
@@ -18,7 +19,7 @@ const SqueezedWrapper = styled.div`
 `
 
 const enhance = compose(
-  graphql(AllSessions),
+  graphql(AllSessions, { options: { variables: { startDate: moment.utc().format('YYYY-M-D') } } }),
   graphql(ClaimSession, { name: 'claimSession' }),
   graphql(FinishSession, { name: 'finishSession' }),
   graphql(DeleteSession, { name: 'deleteSession' }),
@@ -49,14 +50,16 @@ export class Queue extends React.Component {
   }
 
   handleClaimSession = session => async event => {
+    console.log('handleClaim', session)
     const tutorId = this.props.data.currentTutor.id
     await this.props.claimSession({
       variables: { sessionId: session.id, tutorId: tutorId },
       optimisticResponse: {
         claimSession: {
+          __typename: 'ClaimSessionPayload',
           session: {
             ...session,
-            timeClaimed: true,
+            timeClaimed: new Date(),
             tutorId: tutorId
           }
         }
@@ -79,9 +82,10 @@ export class Queue extends React.Component {
       },
       optimisticResponse: {
         finishSession: {
+          __typename: 'FinishSessionPayload',
           session: {
             ...this.state.session,
-            timeOut: true
+            timeOut: new Date()
           }
         }
       }
@@ -100,9 +104,10 @@ export class Queue extends React.Component {
       },
       optimisticResponse: {
         finishSession: {
+          __typename: 'FinishSessionPayload',
           session: {
             ...session,
-            timeOut: true
+            timeOut: new Date()
           }
         }
       }
@@ -114,7 +119,10 @@ export class Queue extends React.Component {
       updateQueries: {
         allSessions: (previousResult, { mutationResult }) => {
           return {
+            ...previousResult,
             allSessions: {
+              __typename: 'SessionsConnection',
+              totalCount: previousResult.allSessions.totalCount + 1,
               nodes: [...previousResult.allSessions.nodes, mutationResult.data.copySession.session]
             }
           }
@@ -128,6 +136,7 @@ export class Queue extends React.Component {
       variables: { sessionId: session.id },
       optimisticResponse: {
         deleteSession: {
+          __typename: 'DeleteSessionPayload',
           session: {
             ...session
           }
@@ -136,6 +145,7 @@ export class Queue extends React.Component {
       updateQueries: {
         allSessions: (previousResult, { mutationResult }) => {
           return {
+            ...previousResult,
             allSessions: {
               nodes: previousResult.allSessions.nodes.filter(s => s.id !== session.id)
             }
@@ -148,20 +158,11 @@ export class Queue extends React.Component {
   render() {
     const { currentTutor, loading } = this.props.data
     var { allSessions } = this.props.data
+    // const mySession = (session) => {console.log('s', session); return currentTutor.id === session.tutor.id}
     const mySession = ({ tutorId }) => currentTutor.id === tutorId
     const claimedSession = ({ timeClaimed, timeOut }) => timeClaimed && !timeOut
     const unclaimedSession = ({ timeClaimed, timeOut }) => !timeClaimed && !timeOut
     const priorSession = ({ timeClaimed, timeOut }) => timeClaimed && timeOut
-    // TODO: Temporary workaround until we get date filtering from the API
-    if (!loading) {
-      // Only show today's sessions
-      allSessions = {
-        ...allSessions,
-        nodes: allSessions.nodes.filter(
-          session => new Date(session.timeIn).toLocaleDateString() === new Date().toLocaleDateString()
-        )
-      }
-    }
     const currentSessions = allSessions => allSessions.nodes.filter(claimedSession).filter(mySession)
     const queuedSessions = allSessions =>
       allSessions.nodes.filter(unclaimedSession).sort((a, b) => new Date(a.timeIn) - new Date(b.timeIn))
@@ -170,6 +171,7 @@ export class Queue extends React.Component {
     if (token != null) {
       return <Redirect to="/queue" />
     }
+    // LEFT OFF HERE - Getting errors when claiming a session
     // TODO: Temporary workaround to keep non-tutors out of the queue manager
     if (localStorage.getItem('token') == null || (!loading && currentTutor === null)) {
       return <Redirect to="/logout" />
@@ -236,7 +238,7 @@ export class Queue extends React.Component {
                 <Table.Row>
                   <Table.HeaderCell width={3}>Name</Table.HeaderCell>
                   <Table.HeaderCell width={1}>Course</Table.HeaderCell>
-                  <Table.HeaderCell width={2}>Reason</Table.HeaderCell>
+                  <Table.HeaderCell width={2}>Tutor</Table.HeaderCell>
                   <Table.HeaderCell width={2}>Waiting</Table.HeaderCell>
                   <Table.HeaderCell width={2}>Duration</Table.HeaderCell>
                   <Table.HeaderCell width={6}>Description</Table.HeaderCell>

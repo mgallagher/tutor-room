@@ -2,10 +2,8 @@ import React from 'react'
 import { Header, Table } from 'semantic-ui-react'
 import moment from 'moment'
 
-import { sessionReasons } from '../../constants'
-
 const PriorSessionRow = ({ session, handleClick }) => {
-  const { studentByStudentId, course, reason, description, timeIn, timeClaimed, timeOut } = session
+  const { studentByStudentId, course, description, timeIn, timeClaimed, timeOut, tutor } = session
   const timeWaitingMs = moment(timeIn).diff(timeClaimed)
   const sessionDurationMs = moment(timeClaimed).diff(timeOut)
   return (
@@ -16,7 +14,7 @@ const PriorSessionRow = ({ session, handleClick }) => {
           <Header.Content>{course.number}</Header.Content>
         </Header>
       </Table.Cell>
-      <Table.Cell>{sessionReasons.get(reason)}</Table.Cell>
+      <Table.Cell>{tutor.preferredName}</Table.Cell>
       <Table.Cell>{moment.duration(timeWaitingMs).humanize()}</Table.Cell>
       <Table.Cell>{moment.duration(sessionDurationMs).humanize()}</Table.Cell>
       <Table.Cell>{description}</Table.Cell>

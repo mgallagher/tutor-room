@@ -8,6 +8,10 @@ export const SessionData = gql`
     reason
     description
     tutorId
+    tutor: tutorByTutorId {
+      id
+      preferredName
+    }
     timeIn
     timeClaimed
     timeOut

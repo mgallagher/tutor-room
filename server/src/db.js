@@ -20,7 +20,7 @@ const safeInsert = (query: Knex$QueryBuilder<*>) =>
 
 // TUTORS
 export const getTutor = (aggieNumber: string | number) => {
-  return psql('tutor_room_private.tutor')
+  return psql('tutor_room.tutor')
     .where('a_number', aggieNumber)
     .first()
     .then((res: ?TutorRecord) => res)

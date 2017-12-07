@@ -15,9 +15,9 @@ const PriorSessionRow = ({ session, handleClick }) => {
         </Header>
       </Table.Cell>
       <Table.Cell>{tutor.preferredName}</Table.Cell>
-      <Table.Cell style={{whiteSpace: 'nowrap'}}>{moment(timeIn).format('h:mm A')}</Table.Cell>
-      <Table.Cell>{moment.duration(sessionDurationMs).minutes()}</Table.Cell>
-      <Table.Cell>{moment.duration(timeWaitingMs).minutes()}</Table.Cell>
+      <Table.Cell style={{ whiteSpace: 'nowrap' }}>{moment(timeIn).format('h:mm A')}</Table.Cell>
+      <Table.Cell>{`${moment.duration(timeWaitingMs).minutes()} min.`}</Table.Cell>
+      <Table.Cell>{`${moment.duration(sessionDurationMs).minutes()} min.`}</Table.Cell>
       <Table.Cell>{description}</Table.Cell>
     </Table.Row>
   )

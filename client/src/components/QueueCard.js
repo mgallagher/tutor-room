@@ -1,6 +1,12 @@
 import React from 'react'
-import { Button, Card } from 'semantic-ui-react'
+import styled from 'styled-components'
 import moment from 'moment'
+import { Button, Card } from 'semantic-ui-react'
+
+export const FlexibleCard = styled(Card)`
+  max-width: 400px;
+  min-width: 180px;
+`
 
 const QueueCard = ({ session, handleClaimClick, handleDeleteClick, raised }) => {
   const { studentByStudentId, course, description, timeIn } = session
@@ -16,9 +22,7 @@ const QueueCard = ({ session, handleClaimClick, handleDeleteClick, raised }) => 
           icon="delete"
           onClick={handleDeleteClick}
         />
-        <Card.Header>
-          {studentByStudentId.preferredName}
-        </Card.Header>
+        <Card.Header>{studentByStudentId.preferredName}</Card.Header>
         <Card.Header>{`${course.number}`}</Card.Header>
         <Card.Meta>{moment(timeIn).fromNow()}</Card.Meta>
         <Card.Description>{description}</Card.Description>

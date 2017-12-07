@@ -12,7 +12,9 @@ import { StartSession } from '../../graphql/mutations'
 import { AverageWait } from '../../graphql/queries'
 import { socket } from '../../constants'
 
-const SqueezedColumn = styled(Grid.Column)`max-width: 450px;`
+const SqueezedColumn = styled(Grid.Column)`
+  max-width: 450px;
+`
 
 const FlexCenter = styled.div`
   display: flex;

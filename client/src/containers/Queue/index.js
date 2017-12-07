@@ -9,7 +9,7 @@ import { socket } from '../../constants'
 
 import CurrentSessionCard from './CurrentSessionCard'
 import PriorSessionRow from './PriorSessionRow'
-import QueueCard from './QueueCard'
+import QueueCard from '../../components/QueueCard'
 import FinishSessionForm from './FinishSessionForm'
 import { AllSessions } from '../../graphql/queries'
 import { ClaimSession, FinishSession, DeleteSession, CopySession } from '../../graphql/mutations'
@@ -18,14 +18,6 @@ const SqueezedWrapper = styled.div`
   max-width: 80%;
   margin: 0 auto 30px;
 `
-
-const enhance = compose(
-  graphql(AllSessions, { options: { variables: { startDate: moment.utc().format('YYYY-M-D') } } }),
-  graphql(ClaimSession, { name: 'claimSession' }),
-  graphql(FinishSession, { name: 'finishSession' }),
-  graphql(DeleteSession, { name: 'deleteSession' }),
-  graphql(CopySession, { name: 'copySession' })
-)
 
 export class Queue extends React.Component {
   initialState = {
@@ -268,5 +260,22 @@ export class Queue extends React.Component {
     )
   }
 }
+
+const enhance = compose(
+  graphql(AllSessions, {
+    options: {
+      variables: {
+        startDate: moment
+          .utc()
+          .subtract(24, 'hours')
+          .format('YYYY-M-DTHH:00:00')
+      }
+    }
+  }),
+  graphql(ClaimSession, { name: 'claimSession' }),
+  graphql(FinishSession, { name: 'finishSession' }),
+  graphql(DeleteSession, { name: 'deleteSession' }),
+  graphql(CopySession, { name: 'copySession' })
+)
 
 export default enhance(Queue)

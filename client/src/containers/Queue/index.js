@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Header, Table, Modal } from 'semantic-ui-react'
+import { Card, Header, Table, Modal, Label, Segment } from 'semantic-ui-react'
 import styled from 'styled-components'
 import { graphql } from 'react-apollo'
 import { Redirect } from 'react-router-dom'
@@ -17,6 +17,31 @@ import { ClaimSession, FinishSession, DeleteSession, CopySession } from '../../g
 const SqueezedWrapper = styled.div`
   max-width: 80%;
   margin: 0 auto 30px;
+`
+
+const CardSegment = styled(Segment)`
+  display: flex;
+  flex-direction: column;
+  padding: 0px !important;
+  & > .ui.label {
+    display: flex;
+    align-items: center;
+    border-radius: 0px;
+    width: 100%;
+    height: 50px;
+  }
+  & > .ui.card {
+    margin: 10px !important;
+  }
+  & > .ui.card.raised {
+    margin: 10px !important;
+  }
+`
+
+const CardContainer = styled.div`
+  display: flex;
+  min-height: 100px;
+  padding: 10px;
 `
 
 export class Queue extends React.Component {
@@ -193,42 +218,45 @@ export class Queue extends React.Component {
           </Modal>
         )}
         {!loading && (
-          <Header as="h3" disabled={currentSessions(allSessions).length === 0} textAlign="left">
-            {currentSessions(allSessions).length > 0 ? 'Current Session' : 'No Current Session'}
-          </Header>
+          <CardSegment disabled={currentSessions(allSessions).length === 0}>
+            <Label attached="top" size="big">
+              {currentSessions(allSessions).length > 0 ? 'Current Session' : 'No Current Session'}
+            </Label>
+            <CardContainer>
+              {currentSessions(allSessions).map((session, i) => (
+                <CurrentSessionCard
+                  handleRequeueSession={this.handleRequeueSession(session)}
+                  handleEndSession={this.handleEndSessionClick(session)}
+                  key={session.nodeId}
+                  session={session}
+                  raised={i === 0}
+                />
+              ))}
+            </CardContainer>
+          </CardSegment>
         )}
-
-        <Card.Group itemsPerRow={3} stackable>
-          {!loading &&
-            currentSessions(allSessions).map((session, i) => (
-              <CurrentSessionCard
-                handleRequeueSession={this.handleRequeueSession(session)}
-                handleEndSession={this.handleEndSessionClick(session)}
-                key={session.nodeId}
-                session={session}
-                raised={i === 0}
-              />
-            ))}
-        </Card.Group>
+        {/* </Card.Group> */}
 
         {/* QUEUED SESSIONS */}
         {!loading && (
-          <Header as="h3" disabled={queuedSessions(allSessions).length === 0} textAlign="left">
-            {queuedSessions(allSessions).length > 0 ? 'Queue' : 'Queue Empty'}
-          </Header>
+          <CardSegment disabled={queuedSessions(allSessions).length === 0}>
+            <Label size="big">
+              {queuedSessions(allSessions).length > 0 ? 'Queue' : 'Queue Empty'}
+              <Label.Detail>{queuedSessions(allSessions).length}</Label.Detail>
+            </Label>
+            <CardContainer>
+              {queuedSessions(allSessions).map((session, i) => (
+                <QueueCard
+                  handleDeleteClick={this.handleDeleteSession(session)}
+                  handleClaimClick={this.handleClaimSession(session)}
+                  key={session.nodeId}
+                  session={session}
+                  raised={i === 0}
+                />
+              ))}
+            </CardContainer>
+          </CardSegment>
         )}
-        <Card.Group itemsPerRow={3} stackable>
-          {!loading &&
-            queuedSessions(allSessions).map((session, i) => (
-              <QueueCard
-                handleDeleteClick={this.handleDeleteSession(session)}
-                handleClaimClick={this.handleClaimSession(session)}
-                key={session.nodeId}
-                session={session}
-                raised={i === 0}
-              />
-            ))}
-        </Card.Group>
         {/* PRIOR SESSIONS */}
         {!loading && (
           <Header as="h3" disabled={priorSessions(allSessions).length === 0} textAlign="left">

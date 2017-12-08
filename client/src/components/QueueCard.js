@@ -4,14 +4,13 @@ import moment from 'moment'
 import { Button, Card } from 'semantic-ui-react'
 
 export const FlexibleCard = styled(Card)`
-  max-width: 400px;
-  min-width: 180px;
+  margin: 5px 10px !important;
 `
 
 const QueueCard = ({ session, handleClaimClick, handleDeleteClick, raised }) => {
   const { studentByStudentId, course, description, timeIn } = session
   return (
-    <Card raised={raised}>
+    <FlexibleCard raised={raised}>
       <Card.Content>
         <Button
           basic
@@ -34,7 +33,7 @@ const QueueCard = ({ session, handleClaimClick, handleDeleteClick, raised }) => 
           </Button>
         </div>
       </Card.Content>
-    </Card>
+    </FlexibleCard>
   )
 }
 

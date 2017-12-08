@@ -7,7 +7,7 @@ import { compose } from 'ramda'
 import moment from 'moment'
 import { socket } from '../../constants'
 
-import CurrentSessionCard from './CurrentSessionCard'
+import CurrentSessionCard from '../../components/CurrentSessionCard'
 import PriorSessionRow from './PriorSessionRow'
 import QueueCard from '../../components/QueueCard'
 import FinishSessionForm from './FinishSessionForm'
@@ -47,6 +47,7 @@ const CardContainer = styled.div`
   display: flex;
   min-height: 100px;
   padding: 10px;
+  flex-wrap: wrap;
 `
 
 export class Queue extends React.Component {
@@ -224,7 +225,7 @@ export class Queue extends React.Component {
         )}
         {!loading && (
           <CardSegment disabled={currentSessions(allSessions).length === 0}>
-            <Label attached="top" size="big">
+            <Label size="big">
               {currentSessions(allSessions).length > 0 ? 'Current Session' : 'No Current Session'}
             </Label>
             <CardContainer>

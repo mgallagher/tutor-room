@@ -2,10 +2,12 @@ import React from 'react'
 import { Button, Card } from 'semantic-ui-react'
 import moment from 'moment'
 
+import { FlexibleCard } from './QueueCard'
+
 const CurrentSessionCard = ({ session, handleEndSession, handleRequeueSession, raised }) => {
   const { studentByStudentId, course, description, timeIn } = session
   return (
-    <Card raised={raised}>
+    <FlexibleCard raised={raised}>
       <Card.Content>
         <Card.Header>{`${studentByStudentId.preferredName} - ${course.number}`}</Card.Header>
         <Card.Meta>{moment(timeIn).fromNow()}</Card.Meta>
@@ -21,7 +23,7 @@ const CurrentSessionCard = ({ session, handleEndSession, handleRequeueSession, r
           </Button>}
         </div>
       </Card.Content>
-    </Card>
+    </FlexibleCard>
   )
 }
 

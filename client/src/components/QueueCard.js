@@ -5,6 +5,12 @@ import { Button, Card } from 'semantic-ui-react'
 
 export const FlexibleCard = styled(Card)`
   margin: 5px 10px !important;
+
+  @media (max-width: 767px) {
+    display: block !important;
+    height: auto !important;
+    width: calc(100% - 2em)!important;
+  }
 `
 
 const QueueCard = ({ session, handleClaimClick, handleDeleteClick, raised }) => {

@@ -17,6 +17,11 @@ import { ClaimSession, FinishSession, DeleteSession, CopySession } from '../../g
 const SqueezedWrapper = styled.div`
   max-width: 80%;
   margin: 0 auto 30px;
+
+  @media (max-width: 767px) {
+    max-width: 90%;
+    margin: 0 auto 20px;
+  }
 `
 
 const CardSegment = styled(Segment)`

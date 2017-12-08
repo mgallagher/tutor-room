@@ -26,6 +26,30 @@ export const getTutor = (aggieNumber: string | number) => {
     .then((res: ?TutorRecord) => res)
 }
 
+// TODO: Delete when Student and Tutors are merged into a single User table
+export const insertTutor = (tutor: Tutor) => {
+  return psql('tutor_room.tutor')
+    .insert({
+      id: tutor.id,
+      a_number: tutor.aNumber,
+      first_name: tutor.firstName,
+      last_name: tutor.lastName,
+      preferred_name: tutor.preferredName
+    })
+    .returning('*')
+    .then((tutor: TutorRecord[]) => {
+      console.log(
+        `New tutor (A-number: ${tutor[0].a_number}, id: ${tutor[0].id}) inserted into DB`
+      )
+      return tutor[0]
+    })
+    .catch(error =>
+      console.log(
+        `ERROR! Unable to insert tutor (A-number: ${tutor.aNumber}, id: ${tutor.id}) into DB with error:\n${error}`
+      )
+    )
+}
+
 // STUDENTS
 export const getStudentQuery = (aggieNumber: string | number) => {
   return psql
@@ -41,6 +65,7 @@ export const getStudent = (aggieNumber: string | number) => {
   })
 }
 
+// TODO: Delete when Student and Tutors are merged into a single User table
 export const insertStudent = (student: Student) => {
   return psql('tutor_room.student')
     .insert({

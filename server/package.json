@@ -31,7 +31,8 @@
   },
   "scripts": {
     "start": "babel-watch src/index.js",
-    "build-server": "rm -rf build && ./node_modules/.bin/babel src -s -d build"
+    "build-server": "rm -rf build && ./node_modules/.bin/babel src -s -d build",
+    "addTutor": "babel-node scripts/addTutor.js"
   },
   "babel": {
     "presets": [

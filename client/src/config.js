@@ -9,7 +9,7 @@ const config = {
   production: {
     graphqlURL: 'https://komaru.eng.usu.edu/graphql/',
     casLoginURL: 'https://login.usu.edu/cas/login?service=https://komaru.eng.usu.edu/login/cas&renew=true',
-    socketURL: 'https://komaru.eng.usu.edu/ws/'
+    socketURL: 'https://komaru.eng.usu.edu/'
   }
 }
 

@@ -1,6 +1,6 @@
 // @flow
-import { getTutor, insertTutor } from '../src/db'
-import { lookupByAggieNumber } from "../src/usuApi";
+import { getTutor, insertTutor } from './db'
+import { lookupByAggieNumber } from './usuApi'
 
 export const courseDetailToCourse = (courseDetail: USUStudentCourseDetail): Course => {
   return {

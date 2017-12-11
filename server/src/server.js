@@ -132,7 +132,7 @@ socketIO.on('connection', client => {
   })
 })
 
-socketIO.listen(8000)
+socketIO.listen(3000)
 app.listen(5000, () => {
   console.log('Tutor Room server listening on port 5000!')
 })

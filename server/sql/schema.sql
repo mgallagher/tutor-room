@@ -11,7 +11,7 @@ CREATE TABLE tutor_room_private.term (
   end_date    DATE NOT NULL
 );
 
-CREATE TABLE tutor_room_private.tutor (
+CREATE TABLE tutor_room.tutor (
   id             INTEGER PRIMARY KEY,
   a_number       TEXT NOT NULL UNIQUE,
   first_name     TEXT,

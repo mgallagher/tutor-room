@@ -79,7 +79,7 @@ const getJWTTokenForUser = (user: StudentRecord | TutorRecord, role: string) =>
   jwt.sign(
     {
       aud: 'postgraphql',
-      // role: role,
+      role: role,
       usu_id: (user && user.id) || undefined,
       a_number: (user && user.a_number) || undefined,
       date_created: new Date().toISOString()
@@ -120,6 +120,7 @@ app.use(
     enableCors: true,
     jwtSecret: config.jwtSecret,
     jwtPgTypeIdentifier: 'tutor_room.jwt_token',
+    pgDefaultRole: 'unauthenticated',
     appendPlugins: [GraphileBuildPgContribConnectionFilter]
   })
 )

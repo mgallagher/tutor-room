@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Header, Table, Modal, Label, Segment } from 'semantic-ui-react'
+import { Header, Table, Modal, Label, Segment } from 'semantic-ui-react'
 import styled from 'styled-components'
 import { graphql } from 'react-apollo'
 import { Redirect } from 'react-router-dom'
@@ -11,7 +11,7 @@ import CurrentSessionCard from '../../components/CurrentSessionCard'
 import PriorSessionRow from './PriorSessionRow'
 import QueueCard from '../../components/QueueCard'
 import FinishSessionForm from './FinishSessionForm'
-import { AllSessions } from '../../graphql/queries'
+import { AllSessions, Sessions } from '../../graphql/queries'
 import { ClaimSession, FinishSession, DeleteSession, CopySession } from '../../graphql/mutations'
 
 const SqueezedWrapper = styled.div`
@@ -95,6 +95,19 @@ export class Queue extends React.Component {
             tutor
           }
         }
+      },
+      updateQueries: {
+        Sessions: (previousResult, { mutationResult }) => {
+          console.log(mutationResult)
+          return {
+            ...previousResult,
+            currentSessions: {
+              __typename: 'SessionsConnection',
+              totalCount: previousResult.currentSessions.totalCount + 1,
+              nodes: [...previousResult.currentSessions.nodes, mutationResult.data.claimSession.session]
+            }
+          }
+        }
       }
     })
     this.emitQueueUpdate()
@@ -150,13 +163,13 @@ export class Queue extends React.Component {
           sessionId: session.id
         },
         updateQueries: {
-          allSessions: (previousResult, { mutationResult }) => {
+          Sessions: (previousResult, { mutationResult }) => {
             return {
               ...previousResult,
-              allSessions: {
+              queuedSessions: {
                 __typename: 'SessionsConnection',
-                totalCount: previousResult.allSessions.totalCount + 1,
-                nodes: [...previousResult.allSessions.nodes, mutationResult.data.copySession.session]
+                totalCount: previousResult.queuedSessions.totalCount + 1,
+                nodes: [...previousResult.queuedSessions.nodes, mutationResult.data.copySession.session]
               }
             }
           }
@@ -178,12 +191,12 @@ export class Queue extends React.Component {
         }
       },
       updateQueries: {
-        allSessions: (previousResult, { mutationResult }) => {
+        Sessions: (previousResult, { mutationResult }) => {
           return {
             ...previousResult,
-            allSessions: {
-              ...previousResult.allSessions,
-              nodes: previousResult.allSessions.nodes.filter(s => s.id !== session.id)
+            queuedSessions: {
+              totalCount: previousResult.queuedSessions.totalCount - 1,
+              nodes: previousResult.queuedSessions.nodes.filter(s => s.id !== session.id)
             }
           }
         }
@@ -194,15 +207,9 @@ export class Queue extends React.Component {
 
   render() {
     const { currentTutor, loading } = this.props.data
-    var { allSessions } = this.props.data
+    const { currentSessions, queuedSessions, priorSessions } = this.props.data
     const mySession = ({ tutorId }) => currentTutor.id === tutorId
-    const claimedSession = ({ timeClaimed, timeOut }) => timeClaimed && !timeOut
-    const unclaimedSession = ({ timeClaimed, timeOut }) => !timeClaimed && !timeOut
-    const priorSession = ({ timeClaimed, timeOut }) => timeClaimed && timeOut
-    const currentSessions = allSessions => allSessions.nodes.filter(claimedSession).filter(mySession)
-    const queuedSessions = allSessions =>
-      allSessions.nodes.filter(unclaimedSession).sort((a, b) => new Date(a.timeIn) - new Date(b.timeIn))
-    const priorSessions = allSessions => allSessions.nodes.filter(priorSession)
+    const myCurrentSessions = !loading ? currentSessions.nodes.filter(mySession) : []
     const token = this.props.match.params.token
     if (token != null) {
       return <Redirect to="/queue" />
@@ -224,12 +231,12 @@ export class Queue extends React.Component {
           </Modal>
         )}
         {!loading && (
-          <CardSegment disabled={currentSessions(allSessions).length === 0}>
+          <CardSegment disabled={myCurrentSessions.length === 0}>
             <Label size="big">
-              {currentSessions(allSessions).length > 0 ? 'Current Session' : 'No Current Session'}
+              {myCurrentSessions.length > 0 ? 'Current Session' : 'No Current Session'}
             </Label>
             <CardContainer>
-              {currentSessions(allSessions).map((session, i) => (
+              {myCurrentSessions.map((session, i) => (
                 <CurrentSessionCard
                   handleRequeueSession={this.handleRequeueSession(session)}
                   handleEndSession={this.handleEndSessionClick(session)}
@@ -245,13 +252,13 @@ export class Queue extends React.Component {
 
         {/* QUEUED SESSIONS */}
         {!loading && (
-          <CardSegment disabled={queuedSessions(allSessions).length === 0}>
+          <CardSegment disabled={queuedSessions.nodes.length === 0}>
             <Label size="big">
-              {queuedSessions(allSessions).length > 0 ? 'Queue' : 'Queue Empty'}
-              <Label.Detail>{queuedSessions(allSessions).length}</Label.Detail>
+              {queuedSessions.nodes.length > 0 ? 'Queue' : 'Queue Empty'}
+              <Label.Detail>{queuedSessions.nodes.length}</Label.Detail>
             </Label>
             <CardContainer>
-              {queuedSessions(allSessions).map((session, i) => (
+              {queuedSessions.nodes.map((session, i) => (
                 <QueueCard
                   handleDeleteClick={this.handleDeleteSession(session)}
                   handleClaimClick={this.handleClaimSession(session)}
@@ -265,12 +272,12 @@ export class Queue extends React.Component {
         )}
         {/* PRIOR SESSIONS */}
         {!loading && (
-          <Header as="h3" disabled={priorSessions(allSessions).length === 0} textAlign="left">
-            {priorSessions(allSessions).length > 0 ? 'Prior Sessions' : 'No Prior Sessions'}
+          <Header as="h3" disabled={priorSessions.nodes.length === 0} textAlign="left">
+            {priorSessions.nodes.length > 0 ? 'Prior Sessions' : 'No Prior Sessions'}
           </Header>
         )}
         {!loading &&
-          priorSessions(allSessions).length > 0 && (
+          priorSessions.nodes.length > 0 && (
             <Table>
               <Table.Header>
                 <Table.Row>
@@ -284,7 +291,7 @@ export class Queue extends React.Component {
                 </Table.Row>
               </Table.Header>
               <Table.Body>
-                {priorSessions(allSessions).map(session => (
+                {priorSessions.nodes.map(session => (
                   <PriorSessionRow key={session.nodeId} session={session} />
                 ))}
               </Table.Body>
@@ -296,7 +303,7 @@ export class Queue extends React.Component {
 }
 
 const enhance = compose(
-  graphql(AllSessions, {
+  graphql(Sessions, {
     options: {
       variables: {
         startDate: moment

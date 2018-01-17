@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Header, Table, Modal, Label, Segment } from 'semantic-ui-react'
+import { Header, Table, Modal, Label, Segment } from 'semantic-ui-react'
 import styled from 'styled-components'
 import { graphql } from 'react-apollo'
 import { Redirect } from 'react-router-dom'
@@ -45,9 +45,11 @@ const CardSegment = styled(Segment)`
 
 const CardContainer = styled.div`
   display: flex;
-  min-height: 100px;
+  min-height: 150px;
   padding: 10px;
   flex-wrap: wrap;
+  background-color: ${props => props.active ? 'lightgrey' : ''};
+  transition: background-color .4s linear;
 `
 
 export class Queue extends React.Component {
@@ -228,7 +230,7 @@ export class Queue extends React.Component {
             <Label size="big">
               {currentSessions(allSessions).length > 0 ? 'Current Session' : 'No Current Session'}
             </Label>
-            <CardContainer>
+            <CardContainer active={currentSessions(allSessions).length > 0}>
               {currentSessions(allSessions).map((session, i) => (
                 <CurrentSessionCard
                   handleRequeueSession={this.handleRequeueSession(session)}
@@ -241,7 +243,6 @@ export class Queue extends React.Component {
             </CardContainer>
           </CardSegment>
         )}
-        {/* </Card.Group> */}
 
         {/* QUEUED SESSIONS */}
         {!loading && (
@@ -250,7 +251,7 @@ export class Queue extends React.Component {
               {queuedSessions(allSessions).length > 0 ? 'Queue' : 'Queue Empty'}
               <Label.Detail>{queuedSessions(allSessions).length}</Label.Detail>
             </Label>
-            <CardContainer>
+            <CardContainer active={queuedSessions(allSessions).length > 0}>
               {queuedSessions(allSessions).map((session, i) => (
                 <QueueCard
                   handleDeleteClick={this.handleDeleteSession(session)}

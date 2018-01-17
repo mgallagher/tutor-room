@@ -45,10 +45,13 @@ const getOrSyncStudent = async (aNumber: string) => {
 const syncStudentSchedule = async (studentId: string | number) => {
   console.log(`Retrieving schedule for student ${studentId}`)
   // TODO: Might want to store term details rather than retrieving every time
-  const termInfo = await getTerm()
+  // const termInfo = await getTerm()
   // REFACTOR: These null checks are getting a bit silly...
-  if (termInfo != null) {
-    const studentSchedule = await getStudentSchedule(studentId, termInfo.termCode)
+  // if (termInfo != null) {
+
+    const studentSchedule = await getStudentSchedule(studentId, '201820')
+    // ***** TEMPORARY FIX ******* WILL ONLY LAST FOR SPRING 2018 SEMESTER
+    // const studentSchedule = await getStudentSchedule(studentId, termInfo.termCode)
     if (studentSchedule != null) {
       const studentCourses = studentSchedule
         .filter(course => course.courseSubject === 'CS')
@@ -56,7 +59,7 @@ const syncStudentSchedule = async (studentId: string | number) => {
       await Promise.all(studentCourses.map(safeInsertCourse))
       await Promise.all(studentCourses.map(course => safeInsertStudentCourse({ studentId, ...course })))
     }
-  }
+  // }
 }
 
 app.use(passport.initialize())
@@ -98,6 +101,7 @@ app.use('/login/cas', (req: express$Request, res, next) => {
     // Tutor role
     const tutor = await getTutor(aggieNumber)
     if (tutor != null) {
+      syncStudentSchedule(tutor.id)
       const token = getJWTTokenForUser(tutor, 'tutor')
       return res.redirect(`${config.frontendURL}/queue/${token}`)
     }
@@ -132,7 +136,7 @@ socketIO.on('connection', client => {
   })
 })
 
-socketIO.listen(3000)
+socketIO.listen(5050)
 app.listen(5000, () => {
   console.log('Tutor Room server listening on port 5000!')
 })
